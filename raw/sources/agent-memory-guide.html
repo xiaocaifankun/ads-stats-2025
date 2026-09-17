@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="2cYFOHRKBpV6RvIR5mGGx7">
+<head data-page-node-id="mN1jh9OlA17MKAyIpkR0fE">
+<meta charset="utf-8" data-page-node-id="YIXlbGX0tjvxyP5XpkrGH1">
+<meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="zpRCNjfWaTgMWAbXAuByjr">
+<title>Agent 记忆系统 · 溯源式学习手册</title>
+<style>
+  :root{
+    --bg:#FAF9F7; --card:#FFFFFF; --border:#E8E3DC;
+    --ink:#292524; --ink2:#78716C; --ink3:#A8A29E;
+    --accent:#C4633F; --accent-soft:#F7EBE4;
+    --ok:#3D7A50; --bad:#B4433A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;font-size:16px}
+  .wrap{max-width:800px;margin:0 auto;padding:0 26px}
+  .svgtext{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+
+  /* ---------- header ---------- */
+  header.page-head{padding:76px 0 48px;border-bottom:1px solid var(--border)}
+  .eyebrow{font-size:12px;letter-spacing:.4em;color:var(--accent);margin-bottom:20px}
+  h1{font-family:Georgia,"Songti SC",serif;font-size:50px;font-weight:400;line-height:1.1}
+  h1 .cn{font-size:21px;color:var(--ink2);margin-left:16px;letter-spacing:.08em}
+  .def{margin-top:22px;font-size:17px;max-width:680px}
+  .chips{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip{font-size:12.5px;color:var(--ink2);border:1px solid var(--border);border-radius:999px;padding:5px 14px;background:var(--card)}
+
+  /* ---------- part divider ---------- */
+  .part{border-bottom:1px solid var(--border);padding:66px 0 20px;background:linear-gradient(180deg,rgba(196,99,63,.045),transparent)}
+  .part .wrap{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+  .part-badge{font-size:11px;letter-spacing:.3em;color:var(--accent);border:1px solid rgba(196,99,63,.4);border-radius:999px;padding:3px 14px}
+  .part h3{font-family:Georgia,"Songti SC",serif;font-size:26px;font-weight:600}
+  .part p{margin-top:10px;font-size:14px;color:var(--ink2);width:100%}
+
+  /* ---------- sections ---------- */
+  section{padding:58px 0;border-bottom:1px solid var(--border)}
+  .sec-no{font-family:Georgia,serif;color:var(--accent);font-size:13px;letter-spacing:.25em}
+  h2{font-family:Georgia,"Songti SC",serif;font-size:28px;font-weight:600;margin-top:8px}
+  .lead{margin-top:20px;font-size:16.5px;max-width:690px}
+  .lead strong{color:var(--ink);font-weight:700}
+  figure{margin-top:32px}
+  .figbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 16px}
+  .figbox svg{width:100%;height:auto;display:block}
+  figcaption{margin-top:14px;text-align:center;font-size:13px;color:var(--ink3)}
+
+  /* ---------- rules ---------- */
+  ol.rules{margin-top:34px;list-style:none;counter-reset:rule;display:flex;flex-direction:column;gap:30px}
+  ol.rules li{counter-increment:rule;padding-left:58px;position:relative}
+  ol.rules li::before{content:counter(rule,decimal-leading-zero);position:absolute;left:0;top:3px;font-family:Georgia,serif;color:var(--accent);font-size:15px;letter-spacing:.06em;border-bottom:2px solid var(--accent);padding-bottom:2px}
+  ol.rules strong{display:block;font-size:16px}
+  .r-exp{display:block;margin-top:4px;font-size:14.5px;color:var(--ink2)}
+  .r-src{font-style:normal;font-size:12.5px;color:var(--ink3);margin-left:10px}
+
+  /* ---------- sources ---------- */
+  .src-grid{margin-top:34px;display:flex;flex-direction:column;gap:14px}
+  .src-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 24px;display:grid;grid-template-columns:46px 1fr;gap:16px}
+  .src-no{font-family:Georgia,serif;color:var(--accent);font-size:15px;padding-top:3px}
+  .src-card h3{font-size:15.5px;font-weight:600;line-height:1.5}
+  .src-card h3 .tag{font-size:11px;font-weight:400;color:var(--accent);border:1px solid rgba(196,99,63,.35);border-radius:999px;padding:1px 9px;margin-left:8px;vertical-align:2px}
+  .src-card p{margin-top:6px;font-size:13.5px;color:var(--ink2);line-height:1.7}
+  .src-card a{display:inline-block;margin-top:10px;font-size:12.5px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,99,63,.35);word-break:break-all}
+  .src-card a:hover{border-bottom-color:var(--accent)}
+  .src-card code{font-family:Cascadia,Consolas,monospace;font-size:12px;background:#F3F0EB;padding:1px 6px;border-radius:5px}
+
+  /* ---------- quiz（作用域收窄，避免命中页面其他元素） ---------- */
+  .quiz-intro{margin-top:14px;font-size:13.5px;color:var(--ink3)}
+  .q{margin-top:36px}
+  .q-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .q-lv{font-size:11.5px;letter-spacing:.12em;color:var(--accent);border:1px solid rgba(196,99,63,.4);border-radius:999px;padding:2px 12px}
+  .q-tag{font-size:11px;color:var(--ink3);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+  .q-no{font-size:12px;color:var(--ink3)}
+  .q-text{margin-top:12px;font-weight:600;font-size:16px}
+  .q-opts{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+  .q-opts .q-opt{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 15px;font-size:14.5px;font-family:inherit;color:var(--ink);cursor:pointer;display:flex;gap:12px;line-height:1.65;transition:border-color .15s}
+  .q-opts .q-opt:hover{border-color:#D8CFC5}
+  .q-opts .q-opt .letter{color:var(--ink3);font-family:Georgia,serif;flex:none}
+  .q-opts .q-opt.ok{border-color:var(--ok);background:rgba(61,122,80,.06)}
+  .q-opts .q-opt.ok .letter{color:var(--ok)}
+  .q-opts .q-opt.bad{border-color:var(--bad);background:rgba(180,67,58,.05)}
+  .q-opts .q-opt.bad .letter{color:var(--bad)}
+  .q-opts.locked .q-opt{cursor:default}
+  .q-opts.locked .q-opt:hover{border-color:var(--border)}
+  .q-opts.locked .q-opt.ok:hover{border-color:var(--ok)}
+  .q-opts.locked .q-opt.bad:hover{border-color:var(--bad)}
+  .q-why{margin-top:14px;font-size:13.5px;color:var(--ink2);border-left:3px solid var(--accent);padding:3px 0 3px 14px;line-height:1.8}
+  .q-why a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,99,63,.35)}
+  #quiz-result{margin-top:44px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:30px 32px}
+  #quiz-result .score{font-family:Georgia,serif;font-size:42px;line-height:1.2}
+  #quiz-result .score em{font-style:normal;font-size:17px;color:var(--ink3);margin-left:6px}
+  #quiz-result .lvls{margin-top:10px;font-size:13.5px;color:var(--ink2)}
+  #quiz-result .verdict{margin-top:14px;font-size:15px}
+  #quiz-reset{display:inline-block;margin-top:20px;font-size:13px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,99,63,.35);cursor:pointer;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+
+  footer{padding:44px 0 64px;font-size:12.5px;color:var(--ink3);text-align:center}
+  @media (max-width:640px){
+    h1{font-size:38px}
+    ol.rules li{padding-left:46px}
+    .src-card{grid-template-columns:34px 1fr;gap:10px}
+  }
+</style>
+</head>
+<body data-page-node-id="ZEl9HEDr37ljqIIXj4ibh9">
+
+<header class="page-head" data-page-node-id="fE5RMFiJwa0aGgnXGs2haE">
+  <div class="wrap" data-page-node-id="XU6ZWRfKFO5L4krWdSipgG">
+    <p class="eyebrow" data-page-node-id="ZEziCLC5coLtyO3WzOdqmP">溯源式概念学习手册</p>
+    <h1 data-page-node-id="T0SA6KOVeD5q5lEr2q6Q7z">Agent 记忆系统<span class="cn" data-page-node-id="vae0hk6ApjkL1QYpvBMX4C">Agent Memory System</span></h1>
+    <p class="def" data-page-node-id="VQK2CAZs9CBpgbYkjCUdkr">大语言模型<strong data-page-node-id="e3t1TxEzLYVyKFSfsT5O4B">天生无状态</strong>——每次调用都从零开始。记忆系统是把无状态的模型变成「记得你、记得项目、记得经验」的系统的那层基础设施：一部分活在上下文窗口里，一部分存在窗口之外的文件与数据库中。</p>
+    <div class="chips" data-page-node-id="Gei7CL7YMzJRQgXZiieUUQ">
+      <span class="chip" data-page-node-id="6uLHS4CzQYitjdwGI2Wezm">LLM 无状态 → 记忆是给 Agent 的「连续性」</span>
+      <span class="chip" data-page-node-id="Mks8aGWdQfFUzLR3w4PB4i">记忆按「存哪」×「存多久」分型：工作 / 语义 / 情景 / 程序</span>
+      <span class="chip" data-page-node-id="44S10xXBdbEbm13XXuBfmG">落地有快慢两个回路：Record 写入 &amp; Retrieve 读取</span>
+    </div>
+  </div>
+</header>
+
+<main data-page-node-id="1h19GQDOOGNbuD187Qx1Sg">
+
+<!-- PART A -->
+<div class="part" data-page-node-id="7csfHgNjnGpT2ppCXigKtt">
+  <div class="wrap" data-page-node-id="vrlTfZXNKmmJJAPVpi1z7t">
+    <span class="part-badge" data-page-node-id="toFjvHcmas8iJTwcubfs60">PART A · 通用原理</span>
+    <h3 data-page-node-id="zZHGScHirZxqpDDWn4Y1ms">通用 Agent 记忆系统</h3>
+    <p data-page-node-id="a90RXGJ1f1Bjm6helDTaUJ">这一部分讲所有 Agent 框架共享的记忆本质：为什么要记忆、记忆分几种、读写回路怎么跑、有哪些铁律。它不绑定任何具体产品。</p>
+  </div>
+</div>
+
+<!-- 01 -->
+<section id="sec-01" data-page-node-id="FfEvAzzOFuUAEW2WEnMlaP">
+  <div class="wrap" data-page-node-id="buw9CfloPYaYpyOX9UWTlb">
+    <p class="sec-no" data-page-node-id="3tmquB9ziTgi5dNkqtLkwk">01</p>
+    <h2 data-page-node-id="mtabMHfxhX8G7s7XZ39ad9">它是什么</h2>
+    <p class="lead" data-page-node-id="9vZAASFigdm9KoE6eJ9wDX"><strong data-page-node-id="GT7TX8vZMsTOyPgCThPq73">「无状态」是问题，「记忆」是解：让信息能跨一次推理、跨一个会话、甚至跨多个会话存活。</strong>记忆不在模型里，而在系统给它搭的「能存能取」的容器里。</p>
+    <figure data-page-node-id="oZYoKnv4ayC1zRAoPmPcQf">
+      <div class="figbox" data-page-node-id="5NBeQIZBfOiLe1hZtnTn3u">
+        <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="无状态模型与带记忆系统对照图" data-page-node-id="QI6A1eCq7a7GaWI1ptxvd8">
+          <defs data-page-node-id="pbmgCdfZIqFEzbrzRQHi0N">
+            <marker id="m1a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="PZF2fn2wNhnZHJGRxRywPz">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E" data-page-node-id="SFFOip4Hx3GFX4ckBv5nzY"/>
+            </marker>
+            <marker id="m1b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="Zi2WvAq5uhfqXyvmZGpQ3S">
+              <path d="M0,0 L10,5 L0,10 z" fill="#C4633F" data-page-node-id="wBGX9QwEwEiIos7HKvSXJh"/>
+            </marker>
+          </defs>
+          <text x="160" y="28" text-anchor="middle" class="svgtext" font-size="13" fill="#78716C" data-page-node-id="4skqvHqYtssjphRahlfBiF">无状态模型 · 每次都从零开始</text>
+          <rect x="30" y="46" width="260" height="70" rx="10" fill="#FFFFFF" stroke="#B4433A" data-page-node-id="HeTxUbAfyfzeQxpZ8GScQc"/>
+          <text x="160" y="76" text-anchor="middle" class="svgtext" font-size="14" font-weight="600" fill="#292524" data-page-node-id="Ztovbl2wOsWVgIxwQ83zms">裸 LLM</text>
+          <text x="160" y="99" text-anchor="middle" class="svgtext" font-size="11.5" fill="#A8A29E" data-page-node-id="DWenrBtCTbQBobsm8oTtwr">回答完即忘 · 无任何保留</text>
+          <line x1="160" y1="122" x2="160" y2="150" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#m1a)" data-page-node-id="kFSH5I49lsF8TpOOxPJhXr"/>
+          <rect x="60" y="156" width="200" height="46" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="guFDzOs8SuyFRo3URJC7NT"/>
+          <text x="160" y="184" text-anchor="middle" class="svgtext" font-size="13" font-weight="600" fill="#292524" data-page-node-id="Af8LxZkJ0szCktlkqYBgoQ">下一次调用</text>
+          <text x="160" y="254" text-anchor="middle" class="svgtext" font-size="11.5" fill="#B4433A" data-page-node-id="8PqkJMP8YV7ZvOES3tbD2b">连接断掉 · 信息不跨调用</text>
+          <line x1="160" y1="210" x2="160" y2="236" stroke="#B4433A" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#m1a)" data-page-node-id="oGpOlZlBFgchKSaqPaDwBC"/>
+
+          <line x1="340" y1="40" x2="340" y2="268" stroke="#E8E3DC" data-page-node-id="9oGax9vfTg8JBPT54ytOFL"/>
+
+          <text x="520" y="28" text-anchor="middle" class="svgtext" font-size="13" fill="#78716C" data-page-node-id="JBTraQRrPENwXHhw0Imu6A">带记忆的系统 · 连续性由此而来</text>
+          <rect x="430" y="46" width="180" height="70" rx="10" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="n6EaJrvLhmW3MRMBky24Om"/>
+          <text x="520" y="76" text-anchor="middle" class="svgtext" font-size="14" font-weight="600" fill="#292524" data-page-node-id="u3WLTHvTX6LWAIcsfdw8U2">Agent + 记忆层</text>
+          <text x="520" y="99" text-anchor="middle" class="svgtext" font-size="11.5" fill="#78716C" data-page-node-id="SOnCujqmbQZ8GKgn3CGFRa">上下文里推理 · 记忆里存取</text>
+          <path d="M 440 168 C 380 206, 640 206, 600 158" fill="none" stroke="#C4633F" stroke-width="1.4" data-page-node-id="l61cPckX8Wrouxrhloc8ov"/>
+          <rect x="440" y="160" width="160" height="44" rx="22" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="7NoRKHLBAJwIYkisFoDmnv"/>
+          <text x="520" y="181" text-anchor="middle" class="svgtext" font-size="12.5" font-weight="600" fill="#292524" data-page-node-id="Y959oHoVEIIw1ND100p38N">记忆存储</text>
+          <text x="520" y="199" text-anchor="middle" class="svgtext" font-size="10.5" fill="#78716C" data-page-node-id="6wcNeSV2mJQ7ewYtH90Fen">文件 · 数据库 · 向量库</text>
+          <text x="700" y="182" text-anchor="start" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="xSPeQ4raR7foCE9boGcwC9">写入</text>
+          <text x="386" y="182" text-anchor="end" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="tnfxaedd8kIGn9JCltHtBD">读取</text>
+          <text x="520" y="262" text-anchor="middle" class="svgtext" font-size="11.5" fill="#C4633F" data-page-node-id="rECY5Yfezj3KWgDbw1IR0J">跨会话也记得 · 信息可回取</text>
+        </svg>
+      </div>
+      <figcaption data-page-node-id="FBGaJoJcDeGnoKcfXEeHiV">记忆的本质：在「裸模型」外加一层可存取的容器。左为无状态、每次断连；右为接入记忆层后形成读写回路。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="sec-02" data-page-node-id="fj5f8U5W61zqKrmhPBA3ao">
+  <div class="wrap" data-page-node-id="PVzGccwGK4iclqG8TO2n2V">
+    <p class="sec-no" data-page-node-id="Qy88QRh9QLwugaaD8RPaz8">02</p>
+    <h2 data-page-node-id="KMPmvOGQ9pznvWCK4lR1Cp">核心设计</h2>
+    <p class="lead" data-page-node-id="ga5RiCrA6nDGBLWNgYUoIA"><strong data-page-node-id="rL6JXpBZxn9BcwaI5PQ6J9">记忆按两条轴分类：存哪里（参数量/文本量）× 存多久（短期/长期）。</strong>认知科学的分类法（工作、情景、语义、程序记忆）被工程界直接借用，作为架构清单。</p>
+    <figure data-page-node-id="bg2JL4g0drsIrf5rUnuINU">
+      <div class="figbox" data-page-node-id="8uhxQEAZNwICDh6gB19Wgo">
+        <svg viewBox="0 0 680 356" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="四种核心记忆类型与存放位置" data-page-node-id="TgFD9mkgbZ02oe81h1jHKX">
+          <!-- 左列 上下文内 -->
+          <text x="60" y="26" text-anchor="middle" class="svgtext" font-size="12.5" fill="#78716C" data-page-node-id="aXEEJHlwCdFigB1gBzabFm">上下文窗口内</text>
+          <rect x="18" y="40" width="86" height="210" rx="9" fill="none" stroke="#E8E3DC" stroke-dasharray="4 4" data-page-node-id="EM3WGsWwPLrWmQV8a9i3df"/>
+          <!-- 工作记忆 -->
+          <rect x="24" y="48" width="74" height="64" rx="8" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="5ZiRoBHAwPdxjjgFZz67Cn"/>
+          <text x="61" y="70" text-anchor="middle" class="svgtext" font-size="11" font-weight="600" fill="#292524" data-page-node-id="Ubl1K7lkiNo3ci1PyEZl38">工作记忆</text>
+          <text x="61" y="85" text-anchor="middle" class="svgtext" font-size="9.5" fill="#78716C" data-page-node-id="xSO6DIRNtaLOiDlh0nBV5Z">Working</text>
+          <text x="61" y="102" text-anchor="middle" class="svgtext" font-size="9.5" fill="#A8A29E" data-page-node-id="b95jxNHoK7FQ4YD0j6vrCW">短期 · 上下文</text>
+
+          <!-- 右区 记忆类型大图 -->
+          <line x1="130" y1="40" x2="130" y2="250" stroke="#E8E3DC" data-page-node-id="dC97c5PZbjUaPsKWYxGYLU"/>
+          <text x="150" y="26" text-anchor="middle" class="svgtext" font-size="12.5" fill="#78716C" data-page-node-id="LlvEaJduLB9pCuNiQFQQAv">按类型 × 时长</text>
+
+          <rect x="150" y="40" width="500" height="210" rx="9" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="F1Vx2GifTunAAyaXe96H08"/>
+          <text x="178" y="68" class="svgtext" font-size="12.5" font-weight="600" fill="#292524" data-page-node-id="Niy6uf4eA39SMGOCpAG48M">语义记忆 Semantic</text>
+          <text x="178" y="86" class="svgtext" font-size="10.5" fill="#A8A29E" data-page-node-id="Iq5NmGH3PLAhfKl7AACzgT">事实 · 偏好 · 领域知识（不含时间）</text>
+          <rect x="560" y="50" width="80" height="26" rx="13" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="c07kpZ97iKGoGkD7rbPqls"/>
+          <text x="600" y="67" text-anchor="middle" class="svgtext" font-size="10.5" fill="#C4633F" data-page-node-id="DPQBcLw80rGZD0RtCEYt1B">长期 · 外部</text>
+
+          <text x="178" y="122" class="svgtext" font-size="12.5" font-weight="600" fill="#292524" data-page-node-id="0xKcNKSDXgIUEa1TuAab6z">情景记忆 Episodic</text>
+          <text x="178" y="140" class="svgtext" font-size="10.5" fill="#A8A29E" data-page-node-id="6VqOm72rucP3ScRebycCV2">具体事件 · 会话记录 · 成败经历（含时间）</text>
+          <rect x="560" y="104" width="80" height="26" rx="13" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="iFHEvhlIKWKOCzENHGe8G6"/>
+          <text x="600" y="121" text-anchor="middle" class="svgtext" font-size="10.5" fill="#C4633F" data-page-node-id="IlTxrztdjtlz2vnPCj96gF">长期 · 外部</text>
+
+          <text x="178" y="176" class="svgtext" font-size="12.5" font-weight="600" fill="#292524" data-page-node-id="UyQHApik5TPo6effFvLGZ7">程序记忆 Procedural</text>
+          <text x="178" y="194" class="svgtext" font-size="10.5" fill="#A8A29E" data-page-node-id="KBtS5AergGyCBIenYBuFFD">怎么做 · 技能 · 工作流 · 行为规则</text>
+          <rect x="560" y="158" width="80" height="26" rx="13" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="QsaS3fktCKw9kLVvcC6YnX"/>
+          <text x="600" y="175" text-anchor="middle" class="svgtext" font-size="10.5" fill="#C4633F" data-page-node-id="HwVDwOLLOZtKWeAX4mWrCw">长期 · 规则/权重</text>
+
+          <text x="178" y="230" class="svgtext" font-size="12.5" font-weight="600" fill="#292524" data-page-node-id="0bNmpHr3SSovwFS6NZPPVC">检索记忆 Retrieval</text>
+          <text x="178" y="248" class="svgtext" font-size="10.5" fill="#A8A29E" data-page-node-id="HgTJYFVJNGgrX8JsdhbHr9">窗口外的文档，按需拉回（RAG）</text>
+          <rect x="560" y="212" width="80" height="26" rx="13" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="bDpgRhyUrO14U8OQwOEVqc"/>
+          <text x="600" y="229" text-anchor="middle" class="svgtext" font-size="10.5" fill="#78716C" data-page-node-id="Ln81uaxKoAD72DbWlVorek">混合 · 向量库</text>
+
+          <!-- 底部桥：巩固 -->
+          <path d="M 61 132 C 60 170, 61 196, 61 226" fill="none" stroke="#C4633F" stroke-width="1.4" marker-end="url(#m1b)" data-page-node-id="yHJNlvSRlA5B95gZQRN63k"/>
+          <text x="61" y="250" text-anchor="middle" class="svgtext" font-size="10.5" fill="#C4633F" data-page-node-id="sQbFxdVFJpc3EWup1p7DFm">工作→长期</text>
+
+          <line x1="150" y1="272" x2="650" y2="272" stroke="#E8E3DC" data-page-node-id="pfTBjDIraiuNtoDxQWex6L"/>
+          <text x="400" y="292" text-anchor="middle" class="svgtext" font-size="11.5" fill="#78716C" data-page-node-id="Okj8jZgi82cBAgW4dhWqTo">还有两类常被提：参数记忆（训练进权重的世界知识）与前瞻记忆（未执行的未来意图）</text>
+          <text x="400" y="312" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E" data-page-node-id="31GaCOu2iyxxpvXHunv7hU">工程落地最常用前三类：工作 + 语义 + 情景；程序记忆常以 skill / runbook 形式存在</text>
+          <text x="400" y="336" text-anchor="middle" class="svgtext" font-size="11.5" fill="#C4633F" data-page-node-id="IY2D3aBxgS9kWeRahcWnDk">判据：这条信息「要不要跨会话活」→ 决定放上下文还是外部存储</text>
+        </svg>
+      </div>
+      <figcaption data-page-node-id="Ho70PvfPG6MfiLGHgNRJvi">最简工作模型：工作记忆（上下文内，实时）＋ 语义 / 情景记忆（外部，持久）。判据是信息是否需要跨会话存活。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="sec-03" data-page-node-id="tiDXVziDQGqHDzDGfH8wjX">
+  <div class="wrap" data-page-node-id="kxNLUC9bs1g8BOiAZZyp47">
+    <p class="sec-no" data-page-node-id="ZMsNcBdMVnOCiFQaLM42n7">03</p>
+    <h2 data-page-node-id="REqdaJE0CK3htsnEmqTW1q">运行全程</h2>
+    <p class="lead" data-page-node-id="EktPNEfdXocRYjRstIklc3"><strong data-page-node-id="i5i6JbcS2Dmbq2DmOTVsAQ">记忆系统靠一对读写回路运转：推理前 Retrieve（从长期记忆捞回注入上下文），推理后 Record（把短期对话提炼存入长期记忆）。</strong>上下文窗口装不下时，还要靠上下文工程来压缩。</p>
+    <figure data-page-node-id="RX3koE2HdiIvv2XEAFBIBX">
+      <div class="figbox" data-page-node-id="3FeUnhE3HeSjcQgVFuaBfC">
+        <svg viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="记忆读写回路时序图" data-page-node-id="tvO4056P37ZCyfffbQ7pYG">
+          <defs data-page-node-id="62Cck5V3LYFW0D3DjDA1iO">
+            <marker id="m3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="Xfuy0EAGz4XyvuokRLgGdC">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E" data-page-node-id="yaeFN9rzeW2vk6WQr03ifd"/>
+            </marker>
+            <marker id="m3b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="AS9xeaiyfgNoKBWYsIFLcJ">
+              <path d="M0,0 L10,5 L0,10 z" fill="#C4633F" data-page-node-id="8lLXOJ8cbczJDrSixErKKL"/>
+            </marker>
+          </defs>
+          <!-- 泳道标题 -->
+          <text x="60" y="24" text-anchor="middle" class="svgtext" font-size="11.5" font-weight="600" fill="#78716C" data-page-node-id="FnfNpTTdoDxoZWMP97K19k">用户</text>
+          <text x="240" y="24" text-anchor="middle" class="svgtext" font-size="11.5" font-weight="600" fill="#78716C" data-page-node-id="iSH92NSoD9HfRJaPw5TfGK">工作记忆 · 上下文窗口</text>
+          <text x="600" y="24" text-anchor="middle" class="svgtext" font-size="11.5" font-weight="600" fill="#78716C" data-page-node-id="LMAEZKOVUN4OykeHx0Vl1t">长期记忆 · 外部存储</text>
+          <!-- Retrieve -->
+          <line x1="90" y1="50" x2="90" y2="58" stroke="#A8A29E" stroke-width="1.4" data-page-node-id="ZCssAzhifSrrIvbH7Pcq4p"/>
+          <rect x="40" y="62" width="100" height="34" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="3cNrCsamgHPqv1KwmEjQkC"/>
+          <text x="90" y="84" text-anchor="middle" class="svgtext" font-size="12" fill="#292524" data-page-node-id="VhMswVAyuhyYyxbeCYwVcE">提问</text>
+          <line x1="140" y1="80" x2="205" y2="80" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#m3a)" data-page-node-id="YnyfhpAZ3QuoM8WOY6FlG0"/>
+          <rect x="210" y="62" width="140" height="36" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="zMoBQp9bUDGL9TnDj8kCLz"/>
+          <text x="280" y="75" text-anchor="middle" class="svgtext" font-size="12" fill="#292524" data-page-node-id="wZ3EUuZkwATS4OyPcY6odU">当前上下文</text>
+          <text x="280" y="90" text-anchor="middle" class="svgtext" font-size="9.5" fill="#A8A29E" data-page-node-id="VCzZ5WxcRAUwN2ueqYuzdW">会话历史 · 系统提示</text>
+          <!-- 查长期 -->
+          <path d="M 300 104 C 400 120, 520 104, 560 70" fill="none" stroke="#C4633F" stroke-width="1.4" marker-end="url(#m3b)" data-page-node-id="hMylqWigyCJNWIbK09LGbX"/>
+          <text x="430" y="124" text-anchor="middle" class="svgtext" font-size="10.5" fill="#C4633F" data-page-node-id="6fVTh9Y4WIpn4tWUb6cNEJ">① 检索 Retrieve · 拉回相关记忆</text>
+          <!-- 长期记忆盒 -->
+          <rect x="520" y="150" width="160" height="120" rx="10" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="YwbEjxuK5u3nhxn7rgoL8M"/>
+          <text x="600" y="172" text-anchor="middle" class="svgtext" font-size="13" font-weight="600" fill="#292524" data-page-node-id="3G1RE8XWRdCQq9CLFEAYHH">长期记忆</text>
+          <text x="600" y="190" text-anchor="middle" class="svgtext" font-size="9.5" fill="#78716C" data-page-node-id="XJdiAdQffd8rJXyshNtJq2">用户画像 · 经验 · 事件</text>
+          <text x="600" y="214" text-anchor="middle" class="svgtext" font-size="9.5" fill="#78716C" data-page-node-id="UAxLwG5cgwWG3mR3q7FCfA">向量库 · 图库 · 文件</text>
+          <!-- 注入 -->
+          <path d="M 520 210 C 460 240, 350 210, 350 176" fill="none" stroke="#C4633F" stroke-width="1.4" marker-end="url(#m3b)" data-page-node-id="nGlf17QCe9kSDH4BBZW76o"/>
+          <text x="398" y="238" text-anchor="middle" class="svgtext" font-size="10.5" fill="#C4633F" data-page-node-id="3gfFizfWpDKAzgoEdjAwHP">② 注入 ③ 推理作答</text>
+          <rect x="210" y="150" width="140" height="52" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="zcFGfS84PHCShYmb7ZfkN9"/>
+          <text x="280" y="172" text-anchor="middle" class="svgtext" font-size="12" fill="#292524" data-page-node-id="eIOJkWoAj6r99XYTMIghik">模型推理</text>
+          <text x="280" y="190" text-anchor="middle" class="svgtext" font-size="9.5" fill="#A8A29E" data-page-node-id="uHcflrHJNQ0W1PFEq3Nbb6">结合注入的记忆生成</text>
+          <!-- 回答 -->
+          <path d="M 210 176 C 160 200, 120 176, 110 158" fill="none" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#m3a)" data-page-node-id="im6GXN0rEp4I5zcayuU4SG"/>
+          <rect x="40" y="150" width="100" height="34" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="NH9YbFjfEPPlch69nYy8Gy"/>
+          <text x="90" y="172" text-anchor="middle" class="svgtext" font-size="12" fill="#292524" data-page-node-id="4kKGvpn7wNJlt4nsaz48LY">得到回答</text>
+          <!-- 巩固 -->
+          <path d="M 280 220 C 380 262, 480 262, 560 274" fill="none" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#m3a)" data-page-node-id="1MimdmayLTguHve89sQXIY"/>
+          <text x="398" y="278" text-anchor="middle" class="svgtext" font-size="10.5" fill="#78716C" data-page-node-id="XXQ8bVpgYjbdcMJHCHQ16l">④ 巩固 Consolidate · 提炼并写入</text>
+          <text x="60" y="312" text-anchor="middle" class="svgtext" font-size="10.5" fill="#A8A29E" data-page-node-id="iLIJV5gXLw0oX7BlpnGHEB">写入常在会话结束或触发点批量执行</text>
+        </svg>
+      </div>
+      <figcaption data-page-node-id="PrHPG2Xtxf2R6NRn2aShKK">读写回路：Retrieve（①→②→③）让长期记忆参与当下推理；Record（④）把当下的有效信息沉淀回长期记忆。两端循环即「会记得的 Agent」。</figcaption>
+    </figure>
+
+    <p class="lead" style="margin-top:40px" data-page-node-id="h9WrLqNmBmwwI0mWU77YO6"><strong data-page-node-id="qsBCPIPHw8fR8xc2Ecu3UJ">上下文窗口是稀缺资源，装不下时要压缩。</strong>Anthropic 给出三条不写坏上下文的路径。</p>
+    <figure data-page-node-id="2XU6VRrorjSZXUICSiQFqW">
+      <div class="figbox" data-page-node-id="kPieV0LasimSMO8FUx2q0C">
+        <svg viewBox="0 0 680 226" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="上下文工程三策略" data-page-node-id="8RU1d8hHBJzczeoGiozBL0">
+          <defs data-page-node-id="Aa1tT3UyUrv694DU6G4AN2">
+            <marker id="m3c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="P8wRnvQ1X1vUdZeBCHcN9J">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E" data-page-node-id="giHA88NP3nAg0z6CDPTiQG"/>
+            </marker>
+          </defs>
+          <rect x="20" y="34" width="196" height="150" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="AlS9UhkaO72tWKDlxvVb1C"/>
+          <text x="118" y="64" text-anchor="middle" class="svgtext" font-size="13.5" font-weight="600" fill="#292524" data-page-node-id="ds61WBE0z9sDZJCGXlwMEX">压缩 Compaction</text>
+          <text x="36" y="90" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="CXzZ7Ho6xkE6R5w2zbFH5X">满窗时对对话做摘要，</text>
+          <text x="36" y="106" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="frpTFd69HfpLMH9wJBHQJP">保留架构决策与未决问题，</text>
+          <text x="36" y="122" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="lOLdnCVXbV7y6AFIM3tDf6">用摘要重启新窗口。</text>
+          <rect x="40" y="136" width="60" height="26" rx="6" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="2aX0BCnOliFwzVc5yFb3A8"/>
+          <text x="70" y="153" text-anchor="middle" class="svgtext" font-size="10" fill="#C4633F" data-page-node-id="VsS7TR6HLSC5GKc1m5Dabj">摘要</text>
+          <line x1="104" y1="149" x2="148" y2="149" stroke="#A8A29E" stroke-width="1.3" marker-end="url(#m3c)" data-page-node-id="zFejP2yun56CCFDEimXvr2"/>
+          <rect x="152" y="136" width="52" height="26" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="00xv5ImVlEJXfBrRDzyplc"/>
+          <text x="178" y="153" text-anchor="middle" class="svgtext" font-size="10" fill="#78716C" data-page-node-id="wSX2uHZXzj8J4xn6r8TwPp">续跑</text>
+          <text x="118" y="184" text-anchor="middle" class="svgtext" font-size="10" fill="#A8A29E" data-page-node-id="ZY9Trbtbtz4slDCcfAGU4I">连续性 · 但摘要取舍有损</text>
+
+          <rect x="242" y="34" width="196" height="150" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="YaJ70hHYvWJdyyW7cJugXC"/>
+          <text x="340" y="64" text-anchor="middle" class="svgtext" font-size="13.5" font-weight="600" fill="#292524" data-page-node-id="VwgITXWYJNNoQA1mWAvmIr">笔记 Note-taking</text>
+          <text x="258" y="90" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="5jZPAH1721MuqtBb0oG8aO">Agent 主动把进度与关键信息</text>
+          <text x="258" y="106" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="M9RUHjLOnYEkmBzei4A685">写到窗口外的文件（如 NOTES.md），</text>
+          <text x="258" y="122" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="sSqG4Rbyv1KpzjnzpgyT6L">下次再读回来。即结构化记录。</text>
+          <rect x="258" y="136" width="164" height="26" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="1s2i8mFEVnBFZgtpd7ip9K"/>
+          <text x="340" y="153" text-anchor="middle" class="svgtext" font-size="10" fill="#78716C" data-page-node-id="fHDKlz4gzZlElB6bIQX5cF">NOTES.md · 待办 · 进度</text>
+          <text x="340" y="184" text-anchor="middle" class="svgtext" font-size="10" fill="#A8A29E" data-page-node-id="DURKzRvipUUfOb0BBzAjwD">持久 · 开销低 · 人类可读</text>
+
+          <rect x="464" y="34" width="196" height="150" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="1X7kJqdG7O2PMA23LaCNe4"/>
+          <text x="562" y="64" text-anchor="middle" class="svgtext" font-size="13.5" font-weight="600" fill="#292524" data-page-node-id="bXsWzB7tlwcbc2z4OOZV21">子代理 Sub-agent</text>
+          <text x="480" y="90" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="HW8gzTFmuwu2zBySJ8yDYH">复杂探索交给专用子代理，</text>
+          <text x="480" y="106" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="OZThUhaSQqLkzAMcexCdD0">它在自己的干净窗口里深挖，</text>
+          <text x="480" y="122" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="0BxkHuSiaD63d1F9OMLx7v">只把浓缩摘要回报主代理。</text>
+          <rect x="520" y="136" width="86" height="26" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="tZeID4ih1krskuCajEBE84"/>
+          <text x="563" y="153" text-anchor="middle" class="svgtext" font-size="10" fill="#78716C" data-page-node-id="y4Cg2B88BZZTkO6yRajH9x">主 ← 子代理摘要</text>
+          <text x="562" y="184" text-anchor="middle" class="svgtext" font-size="10" fill="#A8A29E" data-page-node-id="c0iyMyBJNRQyWjTDOA6KbK">隔离 · 主窗保持干净</text>
+        </svg>
+      </div>
+      <figcaption data-page-node-id="VVLcRaVREQmw8LDn6O7yzO">上下文工程三策略（Anthropic）：压缩保连续性、笔记提供持久、子代理隔离重活。按任务类型选，而非全用。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="sec-04" data-page-node-id="HNBNYHs8vUdmvphLcW5WDl">
+  <div class="wrap" data-page-node-id="FoBygnajrwyebMBEzIHAJz">
+    <p class="sec-no" data-page-node-id="RDCojgBHzkiNEMs5TjOg9b">04</p>
+    <h2 data-page-node-id="4Jkl6qeWdDErFj8jAnsQRs">铁律</h2>
+    <ol class="rules" data-page-node-id="EZgi6JvC7GqhXBjWRGSwIC">
+      <li data-page-node-id="BS0C9Bh4hOMCQvPtxZtBGY">
+        <strong data-page-node-id="qKQTBzy4Kfrhndv3bO4q6B">先问「这条信息要不要跨会话活」，再决定放哪。</strong>
+        <span class="r-exp" data-page-node-id="F61ZEj2RcFWbQgnzCQjjka">只在当前推理用的放工作记忆；要活到下次会话的才放进外部长期记忆。放错层是记忆设计最常见的失误。<em class="r-src" data-page-node-id="2bbgpGYgePMSqsJ9fg2zGn">记忆分类学 · Mastra/Teachahead 2026</em></span>
+      </li>
+      <li data-page-node-id="epcm18dtTFuRiVPVJv3zv1">
+        <strong data-page-node-id="IqyFLdaa4UA347ex381lxN">上下文窗口是稀缺资源，不是无限缓冲。</strong>
+        <span class="r-exp" data-page-node-id="VGwnJI1VUQkQAjj5cXiwnV">工作记忆里每个 token 都是挤占推理的 token。Anthropic 直言核心是把上下文当作有限资源来经营。<em class="r-src" data-page-node-id="zNk6RcNh85wIugfZVzCMP5">Anthropic 2026</em></span>
+      </li>
+      <li data-page-node-id="Ni8C96nw7v7v123FxzPxB3">
+        <strong data-page-node-id="7aUk2r1Hhdfn7xsDR3VbVZ">写入要提炼，读取要按相关性筛——不要照搬原始记录。</strong>
+        <span class="r-exp" data-page-node-id="9lpElCmGGl5xuBSQaKLcRu">Record 不是存原始对话，而是 LLM 抽取「事实/偏好/经验」；Retrieve 不是全量回放，而是按 query 检索 top-k。巩固太激进存噪音，太保守丢信息。<em class="r-src" data-page-node-id="qg2KADwIcJzCC863Ac2dHZ">记忆系统工程 · Mem0 类方案</em></span>
+      </li>
+      <li data-page-node-id="yTdaaqsNjTiaybC8tIFbCQ">
+        <strong data-page-node-id="rXaQcVDLccwg4rFXsJd57l">长期记忆要分清读取范围，防止跨项目串味。</strong>
+        <span class="r-exp" data-page-node-id="SWXXcnaFJTDMjdwu44pGqd">语义记忆按用户、项目、工具分域：存进工作区级别的记忆不该泄漏到别的项目；检索时也要带上 scope 约束。<em class="r-src" data-page-node-id="msjY1nX9AxhaysBWxZ7U2i">Anthropic Managed Agents · 2026</em></span>
+      </li>
+      <li data-page-node-id="QjvA562WFAyNP2QLnouogk">
+        <strong data-page-node-id="D8u8dPald9pOMTkbaupVh3">持久记忆要防「陈腐」与「冲突」。</strong>
+        <span class="r-exp" data-page-node-id="iWFiUEj9YSM9osWMlAYtMB">存下的事实会过期（陈腐）、两次写入会矛盾（冲突）。没有显式的刷新/冲突规则，旧的错记忆会挤掉新的对信息——即上下文污染。<em class="r-src" data-page-node-id="WPHQuC7cMzy9bpy09tsb7b">persistent-memory 设计问题 · 2026</em></span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- PART B -->
+<div class="part" data-page-node-id="uUMg4TGJAkkv01lcmgXycf">
+  <div class="wrap" data-page-node-id="boXCXG44GTkVDLJprKGU2E">
+    <span class="part-badge" data-page-node-id="Ubo0Jkpo8Ij9Nbc8xzA22r">PART B · 具体落地</span>
+    <h3 data-page-node-id="UAyC1UBJ9SGH248FHOQkho">WorkBuddy 的记忆设计</h3>
+    <p data-page-node-id="dVn6Uhib77WhzTlKz0WU87">现在把 Part A 的通用模型放到一个真实产品里看：WorkBuddy 如何在「云端自动画像、用户级跨项目、项目级当日」三个层上落地记忆。所有路径与行为都以本机实测文件为准。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<section id="sec-05" data-page-node-id="lGElOT9LZrnVkSaT4HsV2B">
+  <div class="wrap" data-page-node-id="2HAZUxJzxSm0C8r967Bxul">
+    <p class="sec-no" data-page-node-id="nRHPGEEgAshnRgVmKl2TOn">05</p>
+    <h2 data-page-node-id="jdZBhP3pCLcjmkC4DDutuv">WorkBuddy 的三层记忆</h2>
+    <p class="lead" data-page-node-id="gfwq1YcjWHjGCCP4tTEQhR"><strong data-page-node-id="ArUm0VXASwtzxR0LRPmBLa">WorkBuddy 把通用模型的记忆落成三层，作用域从最宽到最窄：云端记忆（跨所有项目自动）→ 用户级本地（跨项目显式）→ 项目级工作区（单项目）。</strong>三层并存的判据正是 Part A 的铁律一——按信息该活多久、活多广来决定落哪层。</p>
+    <figure data-page-node-id="17JgeBYmb3kNyQXIWUDRai">
+      <div class="figbox" data-page-node-id="JTinj8abiIYygslTWdyqKi">
+        <svg viewBox="0 0 680 390" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WorkBuddy 三层记忆设计图" data-page-node-id="ScGcPCaUgR9TBrnfXoYTI0">
+          <defs data-page-node-id="JdbvwfAXc2KFKlxOACYY9C">
+            <marker id="m5a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="KeT9JG00dLLhJA2UE518Ri">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E" data-page-node-id="tRKPGSfha0vnlwJOLTPnQA"/>
+            </marker>
+          </defs>
+          <text x="340" y="22" text-anchor="middle" class="svgtext" font-size="12" fill="#78716C" data-page-node-id="7rLcH4ddmn8hJJDuP0EhoR">作用域由外到内收窄 · 写入由系统自动到用户显式</text>
+
+          <!-- L1 云端 -->
+          <rect x="60" y="40" width="560" height="86" rx="10" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="FSVwaUfFL21VqtRwUFAWYo"/>
+          <rect x="60" y="40" width="150" height="86" rx="10" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="leefxz9XoWGIF4nZgE2Mff"/>
+          <text x="135" y="70" text-anchor="middle" class="svgtext" font-size="13.5" font-weight="600" fill="#292524" data-page-node-id="uEJ1mmV1EPHf2RibxsBB7e">L1 · 云端记忆</text>
+          <text x="135" y="88" text-anchor="middle" class="svgtext" font-size="9.5" fill="#78716C" data-page-node-id="hQZldBanWRWeoIXZp4wXUG">Cloud Memory</text>
+          <text x="135" y="108" text-anchor="middle" class="svgtext" font-size="10" fill="#C4633F" data-page-node-id="aAaqghg8Fh6l1X8ufrbdCM">只读 · 自动注入</text>
+          <text x="228" y="68" class="svgtext" font-size="12" font-weight="600" fill="#292524" data-page-node-id="K4AxVJYbE0PXUO9IqB3Qo4">会话开头自动注入的长期用户画像（profile）</text>
+          <text x="228" y="90" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="3wgDeUocEBwX8PMCEBqbl0">跨所有会话、跨所有项目 · 由服务端基于历史学习生成 · 我不可本地改写</text>
+          <text x="228" y="112" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="cJZmFqigdYAGy1Z1mpTzzM">另有历史对话检索，可回查很久以前的讨论</text>
+
+          <!-- 分隔 -->
+          <path d="M 340 128 C 340 134, 340 134, 340 138" stroke="#A8A29E" stroke-width="1" fill="none" marker-end="url(#m5a)" data-page-node-id="6nXSNEJ3z462ZducwqpgqS"/>
+
+          <!-- L2 用户级 -->
+          <rect x="130" y="148" width="420" height="86" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="4do7jkZg7oYtAARp9BQdi9"/>
+          <rect x="130" y="148" width="150" height="86" rx="10" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="8yWjLt8J1DNweQgi5RQUNf"/>
+          <text x="205" y="178" text-anchor="middle" class="svgtext" font-size="13.5" font-weight="600" fill="#292524" data-page-node-id="3OsAIw1luOpyXSXWEaxR3A">L2 · 用户级本地</text>
+          <text x="205" y="196" text-anchor="middle" class="svgtext" font-size="9.5" fill="#78716C" data-page-node-id="s4aInakM5789YRq7jDWCvG">User-level Local</text>
+          <text x="205" y="216" text-anchor="middle" class="svgtext" font-size="10" fill="#C4633F" data-page-node-id="4vPrJA5KrusCWyQ2ZB3FVV">显式写入 · 跨项目</text>
+          <text x="296" y="176" class="svgtext" font-size="12" font-weight="600" fill="#292524" data-page-node-id="sWMfDRbYU2UihM8nC9qJwI">~/.workbuddy/MEMORY.md</text>
+          <text x="296" y="198" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="T0skHapny8D19slRBbz9Ce">我主动请求「长期记住」的非项目规则，写入此文件</text>
+          <text x="296" y="218" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="P0AEj2Vwnpk13kIgzbA6aT">对本机所有项目生效 · 单会话写入上限 4000 字符</text>
+
+          <path d="M 340 236 C 340 242, 340 242, 340 246" stroke="#A8A29E" stroke-width="1" fill="none" marker-end="url(#m5a)" data-page-node-id="CeZk2oLYhz7gmcyXHLaohW"/>
+
+          <!-- L3 项目级 -->
+          <rect x="200" y="256" width="280" height="104" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="PrVtdcb2YutzCzeXe7F2q7"/>
+          <rect x="200" y="256" width="150" height="104" rx="10" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="HIgIR5bZ07LwnkarDTw3fD"/>
+          <text x="275" y="288" text-anchor="middle" class="svgtext" font-size="13.5" font-weight="600" fill="#292524" data-page-node-id="MgTxaw6QZGl9xDvWUfKfyQ">L3 · 项目级工作区</text>
+          <text x="275" y="306" text-anchor="middle" class="svgtext" font-size="9.5" fill="#78716C" data-page-node-id="8Sn3UhswR9HRmIymmHksnx">Workspace Memory</text>
+          <text x="275" y="326" text-anchor="middle" class="svgtext" font-size="10" fill="#C4633F" data-page-node-id="abic9eCFm6BFGhDQRlX2SB">当前项目专用</text>
+          <text x="366" y="276" class="svgtext" font-size="11.5" font-weight="600" fill="#292524" data-page-node-id="RgK1h8EcrI2tD1TbbdVTdF">.workbuddy/memory/</text>
+          <text x="366" y="296" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="MqAdWTRSEGRvsmeR5XHAsl">MEMORY.md 长期项目笔记</text>
+          <text x="366" y="314" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="0HLyrGvERT4F3R5GA3QU91">YYYY-MM-DD.md 当日工作日志</text>
+          <text x="366" y="338" class="svgtext" font-size="11" fill="#78716C" data-page-node-id="qgj99ZYL4WDMfag5AZVJPo">日志只追加 · 单会话上限 3000 字符</text>
+        </svg>
+      </div>
+      <figcaption data-page-node-id="GFI9ipdQvICJYANDJYtRPg">WorkBuddy 三层记忆：L1 云端自动画像（最宽、只读）、L2 用户级显式（跨项目）、L3 项目级（单项目）。自上而下由自动到显式、由宽到窄。</figcaption>
+    </figure>
+
+    <p class="lead" style="margin-top:40px" data-page-node-id="UTCyE0t4pwAthwBZsT3CvH"><strong data-page-node-id="YjuGqkSLiii31eYCsr8d5E">读写时机各不同，正好对应通用模型的两条回路。</strong>下面把每一层的「谁写、何时读、存哪」摊开成表。</p>
+    <div class="figbox" style="margin-top:24px" data-page-node-id="niESSRlIOp72zPunMKxMdi">
+      <table style="width:100%;border-collapse:collapse;font-size:13.5px" data-page-node-id="Ddb0Wo5pA746sUnOxdKe9m">
+        <thead data-page-node-id="IBu1rB46OkDYbzJDjFCGjC">
+          <tr style="border-bottom:1.5px solid var(--border)" data-page-node-id="Ag8RdayKHrYoYfPPfXsENG">
+            <th style="text-align:left;padding:8px 10px;color:var(--ink2);font-weight:600" data-page-node-id="9ZbpwR66EHYjiB7zEeXNnD">层级</th>
+            <th style="text-align:left;padding:8px 10px;color:var(--ink2);font-weight:600" data-page-node-id="adhsCUXmpIYu5nXUe9wbEl">写入方</th>
+            <th style="text-align:left;padding:8px 10px;color:var(--ink2);font-weight:600" data-page-node-id="iCXh6ZtkKEZc8G5wEfdRJk">读取时机</th>
+            <th style="text-align:left;padding:8px 10px;color:var(--ink2);font-weight:600" data-page-node-id="EDLRKHfagLorUSmVyn5LO6">路径</th>
+          </tr>
+        </thead>
+        <tbody data-page-node-id="szRsSGDcLG3ZRHt3tSkMj6">
+          <tr style="border-bottom:1px solid var(--border)" data-page-node-id="vQ9z0SRxDgRvxyNYarxWZp">
+            <td style="padding:9px 10px" data-page-node-id="NiGDQ5vv5CBxCrj1cmE0da"><span style="color:var(--accent);font-weight:600" data-page-node-id="ekkETbN1u9jFCWgRB9rE3R">L1 云端</span></td>
+            <td style="padding:9px 10px" data-page-node-id="SXlMM5m0X13hRkWETjefjJ">服务端自动（不可控）</td>
+            <td style="padding:9px 10px" data-page-node-id="Dkz18A3N7jZG6fVExKjJBP">每次会话开场注入</td>
+            <td style="padding:9px 10px" data-page-node-id="F9mdkMLDDw40ANZcOVV7Pg"><code data-page-node-id="x6TC5E64AyEZcX6M1pPP1H">~/.workbuddy/memory/…_memory.md</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)" data-page-node-id="CrewdVAnsOqM4NnsOCXvC1">
+            <td style="padding:9px 10px" data-page-node-id="Z5MRzaBZyD3Ha2hH3c5mWh"><span style="color:var(--accent);font-weight:600" data-page-node-id="JouBkN8wDV4t2SPhUBctrD">L2 用户级</span></td>
+            <td style="padding:9px 10px" data-page-node-id="dB87LTvQazCPwFEC3WYvka">我主动请求「长期记住」</td>
+            <td style="padding:9px 10px" data-page-node-id="eE7da62fiDNARxuh3LX4fh">需要非项目规则时回查</td>
+            <td style="padding:9px 10px" data-page-node-id="aKUBM6EAvnCIF599wIVINB"><code data-page-node-id="7uAvMeZGYyYA4f3wyuePQe">~/.workbuddy/MEMORY.md</code></td>
+          </tr>
+          <tr data-page-node-id="o1BHUxYEcQROC85RQiWLnt">
+            <td style="padding:9px 10px" data-page-node-id="E26LAJ0Fsx87nMEHPAxB58"><span style="color:var(--accent);font-weight:600" data-page-node-id="WizU62wXn8eqlNGVa1oPUu">L3 项目级</span></td>
+            <td style="padding:9px 10px" data-page-node-id="JhRw1hEBF4v3sGqF3cMLhu">完成任务后我追加（日志只增）</td>
+            <td style="padding:9px 10px" data-page-node-id="9hMFYMhEq2750QUSWATj1J">同项目恢复上下文时回查</td>
+            <td style="padding:9px 10px" data-page-node-id="nVRSfO43xBYFGcoOJWvDFQ"><code data-page-node-id="AF7X0Vksp0W2iS3X4qDHTD">.workbuddy/memory/MEMORY.md</code> + <code data-page-node-id="G2xURe7DHgGCYmkNKD4ggh">YYYY-MM-DD.md</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="sec-06" data-page-node-id="hsGjjqXGnYcn1xozNTv4D7">
+  <div class="wrap" data-page-node-id="3ArKG1ZnOeiHESKJup0ubq">
+    <p class="sec-no" data-page-node-id="1EvSgFmGtjdrF6H0kmzxHp">06</p>
+    <h2 data-page-node-id="4AD6LcF5udKaEfXSQdDrB9">溯源</h2>
+    <p class="lead" data-page-node-id="VVS8V7QcWnJd0k0has0mGN"><strong data-page-node-id="zpeevRK9zKb0oUADuFYGGx">通用部分的每个事实出自以下一手来源；WorkBuddy 部分以本机实际文件为直接证据。</strong>点击即可验证。</p>
+    <div class="src-grid" data-page-node-id="AQcw3191GkntaqZahfcVmD">
+      <div class="src-card" data-page-node-id="0qM28PYsboDc1quunGwwot">
+        <div class="src-no" data-page-node-id="Z0gnujq1YlWHCGiTBTFRYf">01</div>
+        <div data-page-node-id="G5sBk7ESHzWJ826DBntaAO">
+          <h3 data-page-node-id="8IpnW2EQUdihkEkYTCA7sG">Effective Context Engineering for AI Agents · Anthropic<span class="tag" data-page-node-id="uRtDkK1nUSpIZGYYKdWQs5">通用</span></h3>
+          <p data-page-node-id="92yaVv4WUwDUSRLQqDmr16">本文给出「上下文是有限资源」的核心主张，以及跨长时任务的三大技术：压缩 Compaction、结构化笔记 Note-taking、子代理架构。直接支撑 01/02/03 与铁律二。</p>
+          <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener" data-page-node-id="4x1ZN2SK9BmGJR4Jg3lnja">anthropic.com/engineering/effective-context-engineering-for-ai-agents</a>
+        </div>
+      </div>
+      <div class="src-card" data-page-node-id="wfUbNXViy2iwNZxQu3nWyt">
+        <div class="src-no" data-page-node-id="myfjrC4Gxqy8eDD9cyQKLl">02</div>
+        <div data-page-node-id="YTHR5pkrBbkHuDB6bVfmIz">
+          <h3 data-page-node-id="yA4mCuXe2gVs62BV6WEAJL">Building Effective Agents · Anthropic（2024-12-19）<span class="tag" data-page-node-id="3JTyOFDF17p6C7C7twqDCC">通用</span></h3>
+          <p data-page-node-id="n3pZ66leaiNMozLjJNIEpx">定义增强型 LLM = 检索 + 工具 + 记忆；Workflow 与 Agent 的控制流分界。为「记忆是增强型 LLM 的基本构件」提供出处。</p>
+          <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener" data-page-node-id="LGUbzvD9DA8o1FFCyyojzN">anthropic.com/engineering/building-effective-agents</a>
+        </div>
+      </div>
+      <div class="src-card" data-page-node-id="YmeFX89x0lLUQArJUfrD68">
+        <div class="src-no" data-page-node-id="HwYjoAvQzVFg57fvYZ8tnv">03</div>
+        <div data-page-node-id="vhbGD6PDck8SbwT4aVeq7L">
+          <h3 data-page-node-id="UGrSA13HjeFN9cR6MvEDGS">Agent Memory: Types &amp; Techniques · Mastra 等工程博客<span class="tag" data-page-node-id="HDZZ42PqMtwe82nCXZZkxG">通用</span></h3>
+          <p data-page-node-id="uJcwHe7PycL6nUSTbrnHYh">把认知科学的记忆分类（工作 / 语义 / 情景 / 程序 / 检索 / 参数 / 前瞻）映射到工程实现，明确各自的时长、存储位置与典型实现，是 02 分类图的依据。</p>
+          <a href="https://mastra.ai/articles/agent-memory" target="_blank" rel="noopener" data-page-node-id="8GViDY7lbt2qcSP6CwhJ2S">mastra.ai/articles/agent-memory</a>
+        </div>
+      </div>
+      <div class="src-card" data-page-node-id="ZQrsTSYoHv6SpcASBJX7qA">
+        <div class="src-no" data-page-node-id="59EAyOzEAAEFuxMArJgVy1">04</div>
+        <div data-page-node-id="FGepukSXVYz5FhmtBwWqoW">
+          <h3 data-page-node-id="OSVxcZoyzpRX5wWVlEJiCp">Anthropic Memory for Managed Agents（2026-04）· 报道<span class="tag" data-page-node-id="2TVhicyzZLfvjGdBwgg2ak">通用</span></h3>
+          <p data-page-node-id="ZnnMVt8zrTcvTyYK0TvlWL">持久记忆把设计重心从「存哪」推向「谁可见、多新鲜、冲突怎么解」——scope / freshness / conflict / trust 四问题，支撑铁律四与五。</p>
+          <a href="https://usewire.io/blog/anthropic-managed-agents-memory-context-engineering/" target="_blank" rel="noopener" data-page-node-id="hcjOHa52zm5i6tVGlAHCDd">usewire.io/blog/anthropic-managed-agents-memory-context-engineering/</a>
+        </div>
+      </div>
+      <div class="src-card" data-page-node-id="fZT0gRmXEYU1ibBO3IboyE">
+        <div class="src-no" data-page-node-id="6y4XOEPKdONB6EqEdeAhuH">05</div>
+        <div data-page-node-id="0HTCR4dY7zArg8RX0LxXnZ">
+          <h3 data-page-node-id="SPvUMtykOleMpbLflZrdrX">记忆读写回路模式 · Mem0 类长期记忆组件<span class="tag" data-page-node-id="QgH6YmB2VqBfoTcjg65NCl">通用</span></h3>
+          <p data-page-node-id="CUYpnYZFT7Lz7kOcyFR9JH">Record（LLM 抽取事实 → 向量化 → 存储）与 Retrieve（query 向量化 → 语义检索 → 注入）两条流程，是 03 时序图与铁律三的工程出处。</p>
+          <a href="https://mem0.ai/" target="_blank" rel="noopener" data-page-node-id="zsJ3a8fATdxUXyrwEoorgS">mem0.ai</a>
+        </div>
+      </div>
+      <div class="src-card" data-page-node-id="Rg357uZroBLEQBJb6pbqEx">
+        <div class="src-no" data-page-node-id="Q0clD4azdnH0SPtxGyaRAy">06</div>
+        <div data-page-node-id="8X9sHaWAhMJuje7MAh1mDL">
+          <h3 data-page-node-id="vxMshyLdBM3dUAixdlajPc">WorkBuddy 会话定义 + 本机记忆文件<span class="tag" data-page-node-id="sZM3WowNz6fX6Wnd8xTXHX">WorkBuddy · 一手</span></h3>
+          <p data-page-node-id="62BSqJTWX3Q1UZxzFmZiV2">WorkBuddy 三层记忆的直接证据：本机 <code data-page-node-id="zDgUYbVABpKf9dl084G9R6">~/.workbuddy/MEMORY.md</code>（用户级）、<code data-page-node-id="L92QSHcpD9wLN7HB82pobS">~/.workbuddy/memory/&lt;id&gt;_memory.md</code>（云端缓存）、<code data-page-node-id="N6LFNzlhBD0ju0E7BSZhjZ">.workbuddy/memory/</code>（项目级工作区）均已实测存在，05 节据此撰写。</p>
+          <a href="file:///C:/Users/yangjh/.workbuddy/MEMORY.md" target="_blank" rel="noopener" data-page-node-id="ztys4PDlZwqYpP2AMKSoJ1">本机 · ~/.workbuddy/MEMORY.md</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="sec-07" data-page-node-id="ZwhXnMEyndKqEZn4ZLAnzq">
+  <div class="wrap" data-page-node-id="mmT2ryPNcHPFwgFFc3131t">
+    <p class="sec-no" data-page-node-id="4yUDj4aaP9vZEBSfxGvGeK">07</p>
+    <h2 data-page-node-id="QlH7dqnH2uzEHjb5Cbwhdx">自测</h2>
+    <p class="quiz-intro" data-page-node-id="UPaQSsMfmlPf0AqA5RV7GM">6 题 · 基础 / 进阶 / 挑战 三级递进 · 覆盖通用原理与 WorkBuddy 落地</p>
+    <div id="quiz" data-page-node-id="qsnWldNX5K7SubAbKzF2c5"></div>
+    <div id="quiz-result" hidden data-page-node-id="cWWNtMsIFcjpWDnde0jvyb">
+      <div class="score" data-page-node-id="xMETlJNEHkSjUuTUxCpSdl"><span id="score-num" data-page-node-id="L26FZunmiJPEgnruocjLUe"></span><em data-page-node-id="O7UyXDBhvLwtrYODjZIJfb">/ 6</em></div>
+      <div class="lvls" id="score-lvls" data-page-node-id="6kDNuIoeAxLt16as3RSpHf"></div>
+      <p class="verdict" id="score-verdict" data-page-node-id="vVUcIk1X0MfjFPMsSjyEFC"></p>
+      <button id="quiz-reset" type="button" data-page-node-id="tLRfrFlJPKIpaDOsONVDq3">重新自测</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer data-page-node-id="dqXYzv6oNXLXRoZ5Doc1MB">
+  <div class="wrap" data-page-node-id="TIT4iuHFB7egDJXQe62L4w">所有事实均可在 06 溯源中点击验证 · 溯源式概念学习手册 · WorkBuddy 部分以本机文件实测为据</div>
+</footer>
+
+<script>
+(function(){
+  var QUIZ = [
+    {
+      lv: "基础 · 识别",
+      tag: "通用",
+      q: "为什么「裸的大语言模型」需要外加一套记忆系统？",
+      opts: [
+        "因为模型的知识会随训练而遗忘",
+        "因为模型天然无状态，每次调用都从零开始，无法记住上次对话",
+        "因为模型的参数量不足以存下所有信息",
+        "因为模型只能理解提示词，无法进行推理"
+      ],
+      ans: 1,
+      why: "LLM 是无状态的：每次 API 调用都独立。记忆系统正是为了把信息跨一次推理、跨会话地保留与回取，把无状态模型变成有连续性的系统。",
+      back: "sec-01"
+    },
+    {
+      lv: "基础 · 识别",
+      tag: "通用",
+      q: "「用户偏好 Python 而非 JavaScript」这类与具体时间无关的知识，属于哪类记忆？",
+      opts: [
+        "情景记忆 Episodic",
+        "工作记忆 Working",
+        "语义记忆 Semantic",
+        "程序记忆 Procedural"
+      ],
+      ans: 2,
+      why: "语义记忆存与时间解耦的事实、偏好、领域知识——像一本「关于用户/主题的百科」。情景记忆则记录「某时某刻发生了什么」。",
+      back: "sec-02"
+    },
+    {
+      lv: "进阶 · 理解",
+      tag: "通用",
+      q: "记忆读写回路中，Retrieve（读取）这一步发生在什么时候、起什么作用？",
+      opts: [
+        "在会话结束时，把整段对话原样存档",
+        "在推理前，从长期记忆检索相关条目注入当前上下文",
+        "在模型训练时，把记忆写入权重",
+        "在输出后，对回答做自动纠错"
+      ],
+      ans: 1,
+      why: "Retrieve 发生在推理前：把长期记忆里与当前 query 相关的信息捞回、注入工作记忆，辅助这次作答。写入长期记忆的步骤是 Record / Consolidate，发生在推理后。",
+      back: "sec-03"
+    },
+    {
+      lv: "进阶 · 理解",
+      tag: "WorkBuddy",
+      q: "WorkBuddy 三层记忆中，哪一层是「会话开始时由服务端自动注入、我只读不可改写」的？",
+      opts: [
+        "L1 云端记忆（长期用户画像）",
+        "L2 用户级本地 MEMORY.md",
+        "L3 项目级 .workbuddy/memory",
+        "以上三者都是用户显式写入"
+      ],
+      ans: 0,
+      why: "L1 云端记忆由服务端基于历史自动生成的 profile 在每次会话开场注入，是只读的、自动的。L2/L3 才是显式或半自动写入的本地文件。",
+      back: "sec-05"
+    },
+    {
+      lv: "挑战 · 应用",
+      tag: "WorkBuddy",
+      q: "你有一条项目专属的约定（如「本仓库用 speckit 工作流」），想让同项目后续会话都知道，但不要污染其它项目。应写入哪一层？",
+      opts: [
+        "用户级 ~/.workbuddy/MEMORY.md",
+        "项目级 .workbuddy/memory/MEMORY.md",
+        "云端记忆（它会自动学习）",
+        "不要记，每次手动说明"
+      ],
+      ans: 1,
+      why: "这是项目级约定：落 L3 项目级 MEMORY.md 最合适——只在当前项目恢复上下文时回查，避免把项目专属规则泄漏到全局。铁律四强调记忆要分清 scope。",
+      back: "sec-05"
+    },
+    {
+      lv: "挑战 · 应用",
+      tag: "通用",
+      q: "一个 agent 在长任务中上下文即将爆满。按 Anthropic 的建议，最适合优先采取的措施是？",
+      opts: [
+        "什么都不做，让模型自己处理长上下文",
+        "对接近上限的历史做压缩摘要，用摘要重启窗口",
+        "把所有工具结果永远保留在上下文里以防遗漏",
+        "换成上下文窗口更大的模型即可一劳永逸"
+      ],
+      ans: 1,
+      why: "上下文是有限资源。Compaction 把接近上限的对话压缩成高保真摘要（保留架构决策、未决问题）再续跑，是最直接的长期连贯手段。只换大窗口不解决上下文污染问题。",
+      back: "sec-03"
+    }
+  ];
+
+  var container = document.getElementById("quiz");
+  var resultBox = document.getElementById("quiz-result");
+  var answered = {};
+  var scoreByLv = {};
+
+  function render(){
+    container.innerHTML = "";
+    answered = {};
+    scoreByLv = {};
+    resultBox.hidden = true;
+    QUIZ.forEach(function(item, idx){
+      var block = document.createElement("div");
+      block.className = "q";
+      var meta = document.createElement("div");
+      meta.className = "q-meta";
+      meta.innerHTML = '<span class="q-lv"></span><span class="q-tag"></span><span class="q-no">第 ' + (idx+1) + ' / ' + QUIZ.length + ' 题</span>';
+      meta.querySelector(".q-lv").textContent = item.lv;
+      meta.querySelector(".q-tag").textContent = item.tag;
+      var text = document.createElement("p");
+      text.className = "q-text";
+      text.innerHTML = item.q;
+      var opts = document.createElement("div");
+      opts.className = "q-opts";
+      item.opts.forEach(function(o, i){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "q-opt";
+        var letter = document.createElement("span");
+        letter.className = "letter";
+        letter.textContent = "ABCD".charAt(i);
+        var body = document.createElement("span");
+        body.innerHTML = o;
+        b.appendChild(letter);
+        b.appendChild(body);
+        b.addEventListener("click", function(){
+          pick(block, opts, item, idx, i);
+        });
+        opts.appendChild(b);
+      });
+      block.appendChild(meta);
+      block.appendChild(text);
+      block.appendChild(opts);
+      container.appendChild(block);
+    });
+  }
+
+  function pick(block, opts, item, idx, choice){
+    if(answered[idx] !== undefined) return;
+    answered[idx] = choice;
+    opts.classList.add("locked");
+    var buttons = opts.querySelectorAll(".q-opt");
+    buttons.forEach(function(b, i){
+      if(i === item.ans) b.classList.add("ok");
+      if(i === choice && choice !== item.ans) b.classList.add("bad");
+    });
+    var why = document.createElement("p");
+    why.className = "q-why";
+    why.innerHTML = (choice === item.ans ? "答对了。" : "答错了。") + item.why +
+      ' <a href="#' + item.back + '">回到 ' + item.back.replace("sec-0","") + ' 节重看</a>';
+    block.appendChild(why);
+    if(choice === item.ans){
+      scoreByLv[item.lv] = (scoreByLv[item.lv] || 0) + 1;
+    }
+    if(Object.keys(answered).length === QUIZ.length){
+      showResult();
+    }
+  }
+
+  function showResult(){
+    var total = 0;
+    var lines = [];
+    QUIZ.forEach(function(item){
+      if(!scoreByLv.hasOwnProperty(item.lv)) scoreByLv[item.lv] = 0;
+    });
+    Object.keys(scoreByLv).forEach(function(lv){
+      total += scoreByLv[lv];
+      lines.push(lv + " " + scoreByLv[lv] + " / " + QUIZ.filter(function(x){return x.lv === lv;}).length);
+    });
+    document.getElementById("score-num").textContent = total;
+    document.getElementById("score-lvls").textContent = lines.join("　·　");
+    var verdict;
+    if(total === 6){
+      verdict = "全对。你既理解了通用记忆原理，也清楚 WorkBuddy 的三层落地——已具备迁移到其它 Agent 框架的判断力。";
+    }else if(total >= 4){
+      verdict = "理解扎实。按解析指引回到对应章节，重点消化 WorkBuddy 三层记忆各自的作用域与写入方。";
+    }else{
+      verdict = "概念骨架尚未立起。建议从 01 顺读到 05，先分清「工作记忆 vs 长期记忆」「自动注入 vs 显式写入」。";
+    }
+    document.getElementById("score-verdict").textContent = verdict;
+    resultBox.hidden = false;
+  }
+
+  document.getElementById("quiz-reset").addEventListener("click", function(){
+    render();
+    window.scrollTo({top: document.getElementById("sec-07").offsetTop, behavior: "smooth"});
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

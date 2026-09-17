@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="FkIYmfyrXcOu42xtCEwC0e">
+<head data-page-node-id="V8BciLEVnzyhlim6BJIYq9">
+<meta charset="UTF-8" data-page-node-id="TIyE4ES69XjoOKqzirjx3r">
+<meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="QZC5Y9VkQpCH0RHwD9wKB9">
+<title>Agent 记忆系统 · 溯源学习手册</title>
+<style>
+  :root{
+    --bg:#FAF9F7; --card:#FFFFFF; --border:#E8E3DC;
+    --ink:#292524; --ink2:#78716C; --ink3:#A8A29E;
+    --accent:#C4633F; --accent-soft:#F7EBE4;
+    --ok:#3D7A50; --bad:#B4433A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--ink);
+    font-family:-apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height:1.7; font-size:15px;}
+  .amg{max-width:800px; margin:0 auto; padding:48px 24px 80px;}
+  .amg .serif{font-family:Georgia, "Songti SC", serif;}
+
+  /* header */
+  .amg header{padding:8px 0 28px; border-bottom:1px solid var(--border); margin-bottom:44px;}
+  .amg .kicker{font-size:12px; letter-spacing:.22em; color:var(--ink3); margin-bottom:14px;}
+  .amg h1{font-family:Georgia, "Songti SC", serif; font-size:34px; font-weight:600; letter-spacing:.02em;}
+  .amg .def{margin-top:14px; font-size:16px; color:var(--ink);}
+  .amg .def b{color:var(--accent);}
+  .amg .chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
+  .amg .chips span{font-size:12px; color:var(--accent); background:var(--accent-soft);
+    border:1px solid var(--accent-soft); border-radius:999px; padding:4px 14px;}
+
+  /* sections */
+  .amg section{margin-bottom:56px;}
+  .amg h2{display:flex; align-items:baseline; gap:12px; font-family:Georgia, "Songti SC", serif;
+    font-size:22px; font-weight:600; margin-bottom:18px;}
+  .amg h2 .no{font-size:13px; color:var(--accent); letter-spacing:.1em; font-family:inherit;}
+  .amg .lead{margin-bottom:6px;}
+  .amg .lead b{color:var(--accent); font-weight:600;}
+  .amg .note{color:var(--ink2); font-size:13.5px; margin-top:10px;}
+  .amg figure{margin:16px 0 4px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:18px 14px 8px;}
+  .amg figure svg{width:100%; height:auto; display:block;}
+  .amg .cap{font-size:12.5px; color:var(--ink3); text-align:center; margin:8px 0 10px;}
+
+  .amg .svgtext{font-family:-apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;}
+  .amg .svgmono{font-family:Cascadia, Consolas, monospace;}
+
+  /* rules */
+  .amg .rules{counter-reset:rule; display:flex; flex-direction:column; gap:14px;}
+  .amg .rules li{list-style:none; counter-increment:rule; display:flex; gap:14px; align-items:baseline;}
+  .amg .rules li::before{content:counter(rule, decimal-leading-zero);
+    font-family:Georgia, serif; color:var(--accent); font-size:15px; min-width:26px;}
+  .amg .rules b{display:block;}
+  .amg .rules span{color:var(--ink2); font-size:13.5px;}
+
+  /* sources */
+  .amg .srcs{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:640px){ .amg .srcs{grid-template-columns:1fr;} }
+  .amg .src{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px;}
+  .amg .src h3{font-size:14.5px; font-weight:600; margin-bottom:6px;}
+  .amg .src p{font-size:13px; color:var(--ink2); margin-bottom:10px;}
+  .amg .src a{font-size:12px; color:var(--accent); text-decoration:none; word-break:break-all;
+    font-family:Cascadia, Consolas, monospace;}
+  .amg .src a:hover{text-decoration:underline;}
+
+  /* quiz */
+  .amg .qcard{background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:20px 22px; margin-bottom:16px;}
+  .amg .qmeta{font-size:12px; color:var(--accent); letter-spacing:.08em; margin-bottom:8px;}
+  .amg .qtext{font-weight:600; margin-bottom:14px;}
+  .amg .opts{display:flex; flex-direction:column; gap:8px;}
+  .amg .opts .opt{text-align:left; display:flex; gap:10px; align-items:baseline;
+    background:var(--bg); border:1px solid var(--border); border-radius:8px;
+    padding:10px 14px; font-size:14px; cursor:pointer; font-family:inherit; color:var(--ink);
+    transition:border-color .15s;}
+  .amg .opts .opt:hover{border-color:var(--accent);}
+  .amg .opts .opt .l{color:var(--ink3); font-family:Georgia, serif; min-width:16px;}
+  .amg .opts .opt.right{border-color:var(--ok); background:#EDF3EE;}
+  .amg .opts .opt.right .l{color:var(--ok);}
+  .amg .opts .opt.wrong{border-color:var(--bad); background:#F8ECEA;}
+  .amg .opts .opt.wrong .l{color:var(--bad);}
+  .amg .opts .opt.dim{opacity:.55; cursor:default;}
+  .amg .explain{margin-top:12px; font-size:13.5px; color:var(--ink2);
+    border-left:3px solid var(--accent-soft); padding-left:12px;}
+  .amg .explain b{color:var(--ink);}
+  .amg .result{background:var(--accent-soft); border-radius:12px; padding:22px 24px; margin-top:20px;}
+  .amg .result h3{font-family:Georgia, serif; font-size:20px; margin-bottom:8px;}
+  .amg .result p{font-size:14px; color:var(--ink2);}
+  .amg .result .big{color:var(--accent); font-weight:700;}
+
+  .amg footer{border-top:1px solid var(--border); padding-top:20px;
+    font-size:12px; color:var(--ink3); text-align:center;}
+</style>
+</head>
+<body data-page-node-id="U1TBIeYb2gqSkVsBVhp1xo">
+<div class="amg" data-page-node-id="uqHN7QsrTQ6uxYvPLg5nzu">
+
+  <header data-page-node-id="C4QEMWjYXTmgsekaXBVhEX">
+    <div class="kicker" data-page-node-id="unuOfVyyKH8N8W6gkbcPsp">溯源学习手册 · 单概念单页</div>
+    <h1 data-page-node-id="wUCZCE1DFVPkjusEcBMYL2">Agent 记忆系统</h1>
+    <p class="def" data-page-node-id="pT7CtjwZVAOUBuTGWJkKCE"><b data-page-node-id="FuEwfQfQKMTHpRRFHdB1gY">把经验存到上下文窗口之外，并在需要时精准取回的机制。</b>一句话：记忆本质上是<b data-page-node-id="rCULEe0Kb7xrBhHkvqUbVn">检索问题</b>，不是存储问题——存了取不回，等于没存。</p>
+    <div class="chips" data-page-node-id="fMOaakrANRJP62X7kCi4AB">
+      <span data-page-node-id="MYiKN7OAy3ljDl4EjwsIxD">检索 = 新近度 + 重要性 + 相关性</span>
+      <span data-page-node-id="U1VeVu5fgiHhqLWEoSgmCz">分层：小而快的上下文 + 大而慢的外部存储</span>
+      <span data-page-node-id="lx0kJh3VPI7srKrfABmXL4">WorkBuddy 三层：云端 · 用户级 · 工作空间</span>
+    </div>
+  </header>
+
+  <!-- 01 -->
+  <section id="s1" data-page-node-id="iFmSJppVBpyX67LtPO72jc">
+    <h2 data-page-node-id="OVxNA8H5lFdga5jyRaeGLX"><span class="no" data-page-node-id="S1YKansqfGhUFkKfb49HgT">01</span>它是什么</h2>
+    <p class="lead" data-page-node-id="8zSAaQAe967x6cqXXv8ew5"><b data-page-node-id="Z19JFGtTmgeCdlmEh15BjT">LLM 天生失忆：参数里没有你的对话，上下文窗口装不下你的历史。</b>记忆系统的使命，就是让每次会话结束时经验不蒸发，下一次按需取回。</p>
+    <figure data-page-node-id="euTaBvII27AUbCnJPyHKOG">
+      <svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" data-page-node-id="55yID2sam4Es9tv8WOlnAP">
+        <defs data-page-node-id="De3Na9eJzTv5JRDNqrIIlr">
+          <marker id="s1a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" data-page-node-id="wQXFcLpztI9g1ApgOVljv0">
+            <path d="M0,0 L8,4 L0,8 z" fill="#A8A29E" data-page-node-id="O8Vv3WY4trzUuaG7dWMoaY"/>
+          </marker>
+        </defs>
+        <!-- left panel -->
+        <text class="svgtext" x="20" y="28" font-size="14" font-weight="600" fill="#292524" data-page-node-id="EXq2VUidnkuiSMrfImj9Fy">无记忆 · 每次从零开始</text>
+        <g data-page-node-id="gpuS7XwUZuUXVxFAw3xXVm">
+          <rect x="20" y="46" width="280" height="46" rx="8" fill="#FFFFFF" stroke="#A8A29E" stroke-dasharray="5 4" data-page-node-id="5CkiydUfv3B9wZwKIkCkgh"/>
+          <text class="svgtext" x="36" y="74" font-size="13" fill="#292524" data-page-node-id="al4hlCpzZyoRTMHsghKD0s">会话 1</text>
+          <text class="svgtext" x="120" y="74" font-size="12" fill="#A8A29E" data-page-node-id="spUP5Ag0erSwYijyRwEby8">提问 · 回答 · 结束即遗忘</text>
+          <rect x="20" y="108" width="280" height="46" rx="8" fill="#FFFFFF" stroke="#A8A29E" stroke-dasharray="5 4" data-page-node-id="OlxjCADZMgeAkJvrwgOBlH"/>
+          <text class="svgtext" x="36" y="136" font-size="13" fill="#292524" data-page-node-id="E2zE7oA9PAT7hlRn6P9TYH">会话 2</text>
+          <text class="svgtext" x="120" y="136" font-size="12" fill="#A8A29E" data-page-node-id="PxIKo8Dv7v801paK1rJDfn">互不相识</text>
+          <rect x="20" y="170" width="280" height="46" rx="8" fill="#FFFFFF" stroke="#A8A29E" stroke-dasharray="5 4" data-page-node-id="aGBIotDdxvSCG3eWWc9Fzd"/>
+          <text class="svgtext" x="36" y="198" font-size="13" fill="#292524" data-page-node-id="cbGIAcxCcHGCAbQEMMjFZs">会话 3</text>
+          <text class="svgtext" x="120" y="198" font-size="12" fill="#A8A29E" data-page-node-id="5dIlaiCnxznZrLez9KBjHl">仍在重复解释背景</text>
+        </g>
+        <!-- divider -->
+        <line x1="340" y1="40" x2="340" y2="220" stroke="#E8E3DC" stroke-width="1" data-page-node-id="oBruTYyAM5kHl55Wz06LYy"/>
+        <!-- right panel -->
+        <text class="svgtext" x="360" y="28" font-size="14" font-weight="600" fill="#292524" data-page-node-id="PBoTj82qYAE949fIgSA6a7">有记忆 · 经验累积</text>
+        <g data-page-node-id="JYK0v4GD3PfyC3GaGtLBYm">
+          <rect x="360" y="52" width="100" height="40" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="4FWzGNrMNbd1A1oAZQ7BAF"/>
+          <text class="svgtext" x="384" y="77" font-size="13" fill="#292524" data-page-node-id="sp6KeAalYIVyrT6FnAboAZ">会话 A</text>
+          <rect x="360" y="112" width="100" height="40" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="zaTlXmjgyT0O9MFe6D1FEc"/>
+          <text class="svgtext" x="384" y="137" font-size="13" fill="#292524" data-page-node-id="9WJgwcHcKnmzIDPnvcq8LA">会话 B</text>
+          <rect x="360" y="172" width="100" height="40" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="ZtGLwGTEonWh93hEZYTf93"/>
+          <text class="svgtext" x="384" y="197" font-size="13" fill="#292524" data-page-node-id="79A3vW0dFag318yf7Sn7FZ">会话 C</text>
+          <!-- write arrows -->
+          <line x1="460" y1="72" x2="498" y2="126" stroke="#A8A29E" stroke-width="1.2" marker-end="url(#s1a)" data-page-node-id="sjiJDdsHLkCUdZ3W8ydcVm"/>
+          <line x1="460" y1="132" x2="498" y2="140" stroke="#A8A29E" stroke-width="1.2" marker-end="url(#s1a)" data-page-node-id="mFGZhfBtP7Xq6YF2FFoYHL"/>
+          <line x1="460" y1="192" x2="498" y2="154" stroke="#A8A29E" stroke-width="1.2" marker-end="url(#s1a)" data-page-node-id="VUsVrBK9ibtVNAQ5WPi8Uv"/>
+          <text class="svgtext" x="462" y="118" font-size="11" fill="#78716C" data-page-node-id="WWU4td4z1FebO7h0iCpNYn">写入</text>
+          <!-- store -->
+          <rect x="500" y="106" width="164" height="60" rx="10" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="zzT4vvFyzYMmqmHHBduFKK"/>
+          <text class="svgtext" x="520" y="131" font-size="13" font-weight="600" fill="#292524" data-page-node-id="qz9CWLr8BaG1I41YJuBGKM">记忆存储</text>
+          <text class="svgtext" x="520" y="151" font-size="11" fill="#78716C" data-page-node-id="OrURojTHETGwaITVUBGOOw">上下文之外 · 持久化</text>
+          <!-- inject arrow -->
+          <line x1="582" y1="106" x2="582" y2="80" stroke="#C4633F" stroke-width="1.4" marker-end="url(#s1a)" data-page-node-id="qHLdmNHGqo4a1neTA0TSrq"/>
+          <text class="svgtext" x="592" y="96" font-size="11" fill="#C4633F" data-page-node-id="ftRgdZwEtHrJBVzy615oc2">注入</text>
+          <!-- new session -->
+          <rect x="500" y="40" width="164" height="38" rx="8" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="D6E0fAdXxQdpD1IA4LBGZx"/>
+          <text class="svgtext" x="520" y="64" font-size="13" fill="#292524" data-page-node-id="9UPHwJtxEPGKfu84fi0DrR">新会话 · 带着记忆</text>
+        </g>
+        <text class="svgtext" x="340" y="242" font-size="12" fill="#A8A29E" text-anchor="middle" data-page-node-id="BymvJoLTzA6WuvitJ3Cztt">图 1 · 左：会话彼此孤立；右：经验沉淀到外部存储，新会话按需取回</text>
+      </svg>
+    </figure>
+    <p class="note" data-page-node-id="VIYLTTxRZyOLBsUEOFZSad">LLM 每次调用都是无状态的：所谓「记住」，全靠系统在 prompt 里重新喂入内容。记忆系统 = 外部存储 + 取回机制。</p>
+  </section>
+
+  <!-- 02 -->
+  <section id="s2" data-page-node-id="7XQ7nq0jFTGB6FwuX6wIsG">
+    <h2 data-page-node-id="XaqizCJRB2UhaQ8qvaYsI1"><span class="no" data-page-node-id="3AnFaZwab2aeCB7ZgfXtvA">02</span>核心设计 · 三大通用范式</h2>
+    <p class="lead" data-page-node-id="abS833FaseaItQJ1mG8CVA"><b data-page-node-id="sMTVjXhnR8NRGfTQGpeL0E">业界收敛出三种范式：像日记本一样打分检索（记忆流），像操作系统一样分层换页（MemGPT），像文件柜一样读写文件（Memory Tool）。</b></p>
+    <figure data-page-node-id="uBl9T2muZR7PBCSxeA4yNA">
+      <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" data-page-node-id="jfF1dBCLPoRqKcyKjCDI5i">
+        <defs data-page-node-id="KwkurZkSf1Pa0VgE5Bmn8a">
+          <marker id="s2a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" data-page-node-id="bTkppU3K72H4WE2QcQWCMm">
+            <path d="M0,0 L8,4 L0,8 z" fill="#A8A29E" data-page-node-id="rYmhkgOngZAnjEmBKel54C"/>
+          </marker>
+        </defs>
+        <!-- col A -->
+        <text class="svgtext" x="30" y="30" font-size="14" font-weight="600" fill="#292524" data-page-node-id="G5QWqPMgTTtldLaC6dqdjc">记忆流 · 检索打分</text>
+        <text class="svgtext" x="30" y="48" font-size="11" fill="#A8A29E" data-page-node-id="AZwIMczBo0WMJesbiGJ5LE">Generative Agents · 2023</text>
+        <g data-page-node-id="yLGFdWr8c06PNaWVc4IU5F">
+          <rect x="30" y="66" width="180" height="30" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="WZjwi6GHoPt1xHm7QjQOTJ"/>
+          <text class="svgtext" x="44" y="86" font-size="12" fill="#78716C" data-page-node-id="Z3tPovgNxdliVIkMg68f6n">观察：冰箱空了</text>
+          <rect x="30" y="102" width="180" height="30" rx="6" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="hlrx40kWcYKqvsS4hJhjaM"/>
+          <text class="svgtext" x="44" y="122" font-size="12" fill="#292524" data-page-node-id="uUlzDUJZ5OtXCt2juYMnjN">观察：讨论派对计划</text>
+          <text class="svgtext" x="150" y="122" font-size="10" fill="#C4633F" data-page-node-id="R6aDhGIqrXESqhbx64ft23">命中</text>
+          <rect x="30" y="138" width="180" height="30" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="ToKDksADGBqDogqqoH0j60"/>
+          <text class="svgtext" x="44" y="158" font-size="12" fill="#78716C" data-page-node-id="HAJC6BXbgGWIdErq8Ky6iH">反思：Klaus 热衷研究</text>
+          <rect x="30" y="174" width="180" height="30" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="c0ABq8uBGHtal3ClO3kZO3"/>
+          <text class="svgtext" x="44" y="194" font-size="12" fill="#78716C" data-page-node-id="5NHDOywsdEY1Lm0sYdMnjT">观察：去药房买药</text>
+          <rect x="30" y="222" width="180" height="52" rx="8" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="4HU8C4nqZQAZqBqYIWRhOV"/>
+          <text class="svgtext" x="40" y="242" font-size="11" fill="#292524" data-page-node-id="2FvfLE5j4PTSNPB7TCxAbZ">score = 新近度</text>
+          <text class="svgtext" x="40" y="260" font-size="11" fill="#292524" data-page-node-id="xgIhWzRVMJ2EWkzXY88YNx">+ 重要性 + 相关性</text>
+          <text class="svgtext" x="30" y="296" font-size="11" fill="#A8A29E" data-page-node-id="nRpnOCj8MeQ6GghMUWVWD1">全部自然语言 · 追加式 · 只取回 top 项</text>
+        </g>
+        <!-- divider -->
+        <line x1="230" y1="24" x2="230" y2="300" stroke="#E8E3DC" data-page-node-id="haVQQn0e0FRoTrs6c7MgQ2"/>
+        <!-- col B -->
+        <text class="svgtext" x="250" y="30" font-size="14" font-weight="600" fill="#292524" data-page-node-id="jzfkfxw4rpXfiWoGeMcscj">分层换页 · OS 式</text>
+        <text class="svgtext" x="250" y="48" font-size="11" fill="#A8A29E" data-page-node-id="URHZbbAfc8DhxywG6yXaDw">MemGPT · 2023</text>
+        <g data-page-node-id="00etVjvTuJLV4GF5v1MrJr">
+          <rect x="250" y="66" width="180" height="48" rx="8" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="GIQm8edHEsuwNVJWgGA7ci"/>
+          <text class="svgtext" x="264" y="86" font-size="12" font-weight="600" fill="#292524" data-page-node-id="Eb8yZrFJf7Wnz59p8Fk5ox">主上下文</text>
+          <text class="svgtext" x="264" y="104" font-size="11" fill="#78716C" data-page-node-id="AqJLCS2vIkzXncsZlSZHLa">小而快 · 当前相关</text>
+          <!-- two way arrows -->
+          <line x1="322" y1="114" x2="322" y2="164" stroke="#A8A29E" stroke-width="1.2" marker-end="url(#s2a)" data-page-node-id="meundz10pQrkHAj9uMi4h3"/>
+          <line x1="358" y1="164" x2="358" y2="114" stroke="#C4633F" stroke-width="1.2" marker-end="url(#s2a)" data-page-node-id="Vv7H2hXJblvVf9lMdi1lKV"/>
+          <text class="svgtext" x="292" y="144" font-size="11" fill="#78716C" data-page-node-id="Cby39fEGGpNdpZDmONEgOF">换入</text>
+          <text class="svgtext" x="368" y="144" font-size="11" fill="#C4633F" data-page-node-id="syKB7CbgwNu73N9DjftLpw">换出</text>
+          <rect x="250" y="164" width="180" height="66" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="YSGj8mwGUaKsBJGIb940uc"/>
+          <text class="svgtext" x="264" y="184" font-size="12" font-weight="600" fill="#292524" data-page-node-id="bET0k9Knj35PqK6RQKTdqU">外部存储</text>
+          <text class="svgtext" x="264" y="202" font-size="11" fill="#78716C" data-page-node-id="8sAt1NYRpdJF99hajXrqHO">大而慢 · 完整历史</text>
+          <text class="svgtext" x="264" y="220" font-size="11" fill="#78716C" data-page-node-id="N0gLm9WdmlCWLObC0iEXM8">检索库(向量) + 归档库(原文)</text>
+          <text class="svgtext" x="250" y="264" font-size="11" fill="#A8A29E" text-anchor="start" data-page-node-id="HolndFZZhC51YMu6qJyEH3">类比虚拟内存：</text>
+          <text class="svgtext" x="250" y="282" font-size="11" fill="#A8A29E" data-page-node-id="NDcRWiyHD5fFeGwnTa3svK">内存不够，就在内存与磁盘之间倒腾</text>
+        </g>
+        <!-- divider -->
+        <line x1="450" y1="24" x2="450" y2="300" stroke="#E8E3DC" data-page-node-id="KOeD2Mi2iu4qZdCMoEEZnG"/>
+        <!-- col C -->
+        <text class="svgtext" x="470" y="30" font-size="14" font-weight="600" fill="#292524" data-page-node-id="OXfSlBmq3c4Otbi4ekrtqu">文件即记忆</text>
+        <text class="svgtext" x="470" y="48" font-size="11" fill="#A8A29E" data-page-node-id="oHPVUmRs8jvgxNSIbNscfU">Anthropic Memory Tool · 2025</text>
+        <g data-page-node-id="lLuxq4cs2kXV3kNSct890y">
+          <rect x="470" y="66" width="180" height="56" rx="8" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="JWiCzj866d1XDbqQtbPoZs"/>
+          <text class="svgmono" x="484" y="88" font-size="12" font-weight="600" fill="#292524" data-page-node-id="BUy5kB0HxDPxJR0OaoOmWQ">/memories/</text>
+          <text class="svgtext" x="484" y="108" font-size="11" fill="#78716C" data-page-node-id="vDVaFaYM7FWMFHtwsokeCy">一个目录 · 客户端托管</text>
+          <rect x="470" y="136" width="180" height="28" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="FWUeEy5ibBsW63aSX5JhcT"/>
+          <text class="svgmono" x="484" y="155" font-size="11" fill="#78716C" data-page-node-id="B1jpKDB4PeCcp6K3ACAumD">user_profile.md</text>
+          <rect x="470" y="170" width="180" height="28" rx="6" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="sNeLKaRniOqVbUtfNyxgCy"/>
+          <text class="svgmono" x="484" y="189" font-size="11" fill="#78716C" data-page-node-id="h0PehtE3Yfjt27hequksBT">project_notes.md</text>
+          <line x1="560" y1="198" x2="560" y2="224" stroke="#A8A29E" stroke-width="1.2" marker-end="url(#s2a)" data-page-node-id="vbtVqJSpFgVGfujzfR3GsM"/>
+          <line x1="590" y1="224" x2="590" y2="198" stroke="#C4633F" stroke-width="1.2" marker-end="url(#s2a)" data-page-node-id="IB0VhZGQmwAPHbwSYAr9NB"/>
+          <rect x="470" y="224" width="180" height="48" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="mrTfpUbiR1I7b8H3g62tlB"/>
+          <text class="svgtext" x="484" y="244" font-size="12" fill="#292524" data-page-node-id="FKIarVdDonkKm5pKKn158z">上下文</text>
+          <text class="svgtext" x="484" y="262" font-size="11" fill="#78716C" data-page-node-id="yD5F9Z1onU5HB4LKBsiriq">用时才读 · 按需加载</text>
+          <text class="svgtext" x="470" y="296" font-size="11" fill="#A8A29E" data-page-node-id="qheAU2XuhocEnNFdbD3zyH">读写都是文件操作 · 人可直接审计</text>
+        </g>
+        <text class="svgtext" x="340" y="314" font-size="12" fill="#A8A29E" text-anchor="middle" data-page-node-id="DaNo3tkiRSTg7i05CnNtai">图 2 · 三种范式一脉相承：存储在外、检索在后、注入靠前</text>
+      </svg>
+    </figure>
+    <p class="note" data-page-node-id="hkWZq10gA6udB9CsB1l0tQ">三者不互斥：现代产品通常混用——文件做载体，打分做检索，分层做容量管理。</p>
+  </section>
+
+  <!-- 03 -->
+  <section id="s3" data-page-node-id="az3byYB7FFJmh5iRZMnt4q">
+    <h2 data-page-node-id="M2Wxb6JXcmRFHOnYkjYgPq"><span class="no" data-page-node-id="dMoZ8b5AD5ns9HgyHdGIZ0">03</span>运行全程 · 四步循环</h2>
+    <p class="lead" data-page-node-id="AfT0jEfTrZHS2diXxpBVqD"><b data-page-node-id="XzY1HIDm6GvVQWOBjOz0MZ">任何记忆系统都在跑同一个循环：写入 → 蒸馏 → 检索 → 注入。</b>会话结束，新经历再次写入，如此往复。</p>
+    <figure data-page-node-id="qpg0OtTPC4kKPE5pce1MGb">
+      <svg viewBox="0 0 680 210" xmlns="http://www.w3.org/2000/svg" data-page-node-id="8esQodPtUvSjKHefWW2PWZ">
+        <defs data-page-node-id="GkzFRU11IFiVJMDtofWnwu">
+          <marker id="s3a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" data-page-node-id="4NfPZeLEezsFrAkGctZreQ">
+            <path d="M0,0 L8,4 L0,8 z" fill="#A8A29E" data-page-node-id="iU18WcEy8RQ0tmSRuFtt24"/>
+          </marker>
+        </defs>
+        <g data-page-node-id="EFmplynqdaJ5r91ynWSvoO">
+          <rect x="20" y="44" width="140" height="74" rx="10" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="uCM0A1CupN4UDJpgt0XHCn"/>
+          <text class="svgtext" x="36" y="70" font-size="13" font-weight="600" fill="#292524" data-page-node-id="jhBEMqGGK0j2ZU1x1NMw2v">① 写入</text>
+          <text class="svgtext" x="36" y="90" font-size="11" fill="#78716C" data-page-node-id="lEYMHBqU6aCORLu0QTaTHl">追加原始记录</text>
+          <text class="svgtext" x="36" y="106" font-size="11" fill="#78716C" data-page-node-id="DoGmXp2yZSjuLY8DUbmsD0">append-only</text>
+          <rect x="190" y="44" width="140" height="74" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="sQPpD1gZY9yLf4ZgIMsNDb"/>
+          <text class="svgtext" x="206" y="70" font-size="13" font-weight="600" fill="#292524" data-page-node-id="WTF5rMMbK2WOSFGP36gGnr">② 蒸馏</text>
+          <text class="svgtext" x="206" y="90" font-size="11" fill="#78716C" data-page-node-id="6uS9kXUJjaJHsG6AWPHupV">压缩提炼要点</text>
+          <text class="svgtext" x="206" y="106" font-size="11" fill="#78716C" data-page-node-id="7l7XxJenepkZJqUS612XCZ">反思 / 摘要 / 归档</text>
+          <rect x="360" y="44" width="140" height="74" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="kqdoWQIT8pRt1w7pU1ZXDM"/>
+          <text class="svgtext" x="376" y="70" font-size="13" font-weight="600" fill="#292524" data-page-node-id="tiwqQ663vjSQ8z3jKi3i3h">③ 检索</text>
+          <text class="svgtext" x="376" y="90" font-size="11" fill="#78716C" data-page-node-id="pOcjOuftOEWZyEHSVxLlHK">按打分取 top 项</text>
+          <text class="svgtext" x="376" y="106" font-size="11" fill="#78716C" data-page-node-id="3phNK9WtOZGZkIDef7Dlzo">向量 / 关键词 / 时间</text>
+          <rect x="530" y="44" width="140" height="74" rx="10" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="9K9UiuB2lqZhSVGpNxt4iH"/>
+          <text class="svgtext" x="546" y="70" font-size="13" font-weight="600" fill="#292524" data-page-node-id="gHnSVrQjojzL0vn17rESmt">④ 注入</text>
+          <text class="svgtext" x="546" y="90" font-size="11" fill="#78716C" data-page-node-id="yXstVfBut8fChFTiDVNlRN">放进当前 prompt</text>
+          <text class="svgtext" x="546" y="106" font-size="11" fill="#78716C" data-page-node-id="FHvEdFpEhM5p94k5CwwMlH">成为上下文</text>
+          <line x1="160" y1="81" x2="188" y2="81" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)" data-page-node-id="Iigb1OAZklRIO6g3XRfsVE"/>
+          <line x1="330" y1="81" x2="358" y2="81" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)" data-page-node-id="vf0BnuSGqxHQ6zp3SEYLjy"/>
+          <line x1="500" y1="81" x2="528" y2="81" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)" data-page-node-id="BB6K1ZmpZ7P13UiCii7cea"/>
+          <!-- loop back -->
+          <path d="M600,118 C600,168 80,168 80,118" fill="none" stroke="#C4633F" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#s3a)" data-page-node-id="6IsKJKMZuDTM5IMnyaEnh9"/>
+          <text class="svgtext" x="340" y="180" font-size="11" fill="#C4633F" text-anchor="middle" data-page-node-id="mvyym106XDwBenEoxEGpM8">新经历 · 回到写入，循环往复</text>
+        </g>
+        <text class="svgtext" x="340" y="202" font-size="12" fill="#A8A29E" text-anchor="middle" data-page-node-id="SQ35HF2BHpaB2iq4dmrnkf">图 3 · 记忆生命周期：只存不馏会膨胀，只馏不检会失焦</text>
+      </svg>
+    </figure>
+    <p class="note" data-page-node-id="ZCyIGqmmrckQbt4uOtsYTJ">蒸馏是「聪明的遗忘」：Generative Agents 用反思把琐碎观察合成高层洞见，Anthropic 用 compaction 把长对话压成摘要——只存不用，迟早淹没在噪声里。</p>
+  </section>
+
+  <!-- 04 -->
+  <section id="s4" data-page-node-id="1R2XeJLvTwxGlhRaZIp6pA">
+    <h2 data-page-node-id="IelqjbQrzVgkPZSvFBqsyE"><span class="no" data-page-node-id="LGQG5fPljATH1FBENiUJj4">04</span>WorkBuddy 的记忆设计</h2>
+    <p class="lead" data-page-node-id="UHhDEqZArrKiWncBoW8jkt"><b data-page-node-id="ha7p1jdbuVF2XBM5IeoCDo">WorkBuddy 按「作用域」把记忆切成三层：云端画像管「你是谁」，用户级文件管「你的偏好」，工作空间日志管「这个项目发生了什么」。</b></p>
+    <figure data-page-node-id="LmFNJIEUsxjPpnqDneI9Wc">
+      <svg viewBox="0 0 680 350" xmlns="http://www.w3.org/2000/svg" data-page-node-id="fqi0HfKehXxI4eKVmqAZw4">
+        <defs data-page-node-id="hiYHyBp1mRn6jvadAMp4KF">
+          <marker id="s4a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" data-page-node-id="lLGHkzBZAh0XFr301bJCVk">
+            <path d="M0,0 L8,4 L0,8 z" fill="#A8A29E" data-page-node-id="8WAS8HJ54OMcZ2qiTzNcc7"/>
+          </marker>
+        </defs>
+        <!-- band 1 -->
+        <rect x="20" y="20" width="640" height="92" rx="12" fill="#FFFFFF" stroke="#C4633F" data-page-node-id="PU5IQhomgmj0BRE76ZZu5d"/>
+        <text class="svgtext" x="36" y="48" font-size="14" font-weight="600" fill="#C4633F" data-page-node-id="fl8A4Pz1VB5Gfr8yFH3Yqp">① 云端记忆</text>
+        <text class="svgtext" x="36" y="70" font-size="11" fill="#78716C" data-page-node-id="AFzKFjYdXXwRIMW2STVh2J">服务端维护 · AI 只读</text>
+        <text class="svgtext" x="36" y="88" font-size="11" fill="#78716C" data-page-node-id="NYukA94FJu1FAXwOsjAUHv">跨设备：是</text>
+        <rect x="200" y="36" width="200" height="60" rx="8" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="g28yZwnJ2exFECBXFiT51F"/>
+        <text class="svgmono" x="214" y="60" font-size="11.5" font-weight="600" fill="#292524" data-page-node-id="WDXWAIZV6BTSedkCApxAMe">&lt;memory&gt; 画像注入</text>
+        <text class="svgtext" x="214" y="80" font-size="11" fill="#78716C" data-page-node-id="AeyPgolMS7Jei5bKtPjWNI">会话启动自动进系统提示</text>
+        <rect x="420" y="36" width="224" height="60" rx="8" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="o9HlDEyG6pX84tQcUsjhrE"/>
+        <text class="svgmono" x="434" y="60" font-size="11.5" font-weight="600" fill="#292524" data-page-node-id="U5EQx6ZJJCY9wKfp7SkaCW">conversation_search</text>
+        <text class="svgtext" x="434" y="80" font-size="11" fill="#78716C" data-page-node-id="LtC09UzDTIrOABpjS30RfM">按需检索全部历史对话</text>
+        <!-- band 2 -->
+        <rect x="20" y="126" width="640" height="92" rx="12" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="F1cfw06m7CtqJ6sJos7yEu"/>
+        <text class="svgtext" x="36" y="154" font-size="14" font-weight="600" fill="#292524" data-page-node-id="u3tpyL6WhhtittfBrEFzlC">② 用户级本地</text>
+        <text class="svgmono" x="36" y="176" font-size="10.5" fill="#78716C" data-page-node-id="p1LTKIAHeLW81NFYW6pZw2">~/.workbuddy/</text>
+        <text class="svgtext" x="36" y="194" font-size="11" fill="#78716C" data-page-node-id="TdULPXcGLYZGOqSTIuGckE">跨项目：是 · 跨设备：否</text>
+        <rect x="200" y="142" width="200" height="60" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="3DUR47ctayJI0QtaLTRKLu"/>
+        <text class="svgmono" x="214" y="166" font-size="11.5" font-weight="600" fill="#292524" data-page-node-id="l1BdEVF95QLNGWCYTFcPur">MEMORY.md</text>
+        <text class="svgtext" x="214" y="186" font-size="11" fill="#78716C" data-page-node-id="0czONDjaYqfle7gJCI3vpm">跨项目长期偏好 · AI 读写</text>
+        <rect x="420" y="142" width="224" height="60" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="qJ3tFLJXsgY4KFAeK6RVIG"/>
+        <text class="svgmono" x="434" y="166" font-size="11.5" font-weight="600" fill="#292524" data-page-node-id="d4ByGPmV8o9I7qkhy8bSCG">SOUL / IDENTITY / USER.md</text>
+        <text class="svgtext" x="434" y="186" font-size="11" fill="#78716C" data-page-node-id="LzkUVUlFC5Ntjemo4r8Ibk">身份文件 · 人格与用户档案</text>
+        <!-- band 3 -->
+        <rect x="20" y="232" width="640" height="92" rx="12" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="44Q3i4Q0JPbrdDEGtqIQIA"/>
+        <text class="svgtext" x="36" y="260" font-size="14" font-weight="600" fill="#292524" data-page-node-id="JBF83HgnGJDOBqzEexeUSQ">③ 工作空间</text>
+        <text class="svgmono" x="36" y="282" font-size="10.5" fill="#78716C" data-page-node-id="Ppts1GMJCZJ9E4CW0aYYyV">项目/.workbuddy/memory/</text>
+        <text class="svgtext" x="36" y="300" font-size="11" fill="#78716C" data-page-node-id="ZqtGcBCO4BfAO4APLqaxjT">仅本项目 · 跨设备：否</text>
+        <rect x="200" y="248" width="150" height="60" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="vt7sKrKsyJI6bax8kD1jzr"/>
+        <text class="svgmono" x="212" y="270" font-size="10.5" font-weight="600" fill="#292524" data-page-node-id="yZKViaz4E9RIsUb0wZCVmr">YYYY-MM-DD.md</text>
+        <text class="svgtext" x="212" y="288" font-size="11" fill="#78716C" data-page-node-id="fAdCJuW5EDnHuwdkSSV9ol">每日日志 · 只追加</text>
+        <line x1="350" y1="278" x2="388" y2="278" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s4a)" data-page-node-id="F3JFCD2C93gnR6m03pAOUI"/>
+        <rect x="390" y="248" width="110" height="60" rx="8" fill="#F7EBE4" stroke="#C4633F" data-page-node-id="veNW4jG7YoRnispKFelMJW"/>
+        <text class="svgtext" x="402" y="272" font-size="11.5" font-weight="600" fill="#C4633F" data-page-node-id="BTbfH1A0G6SZoGu0M5Fefi">30 天蒸馏</text>
+        <text class="svgtext" x="402" y="290" font-size="11" fill="#78716C" data-page-node-id="wjXIehRvtiZkQjPG7pKrCF">按主题提炼</text>
+        <line x1="500" y1="278" x2="538" y2="278" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s4a)" data-page-node-id="WuQSnKzpWcqkvmiaWXt9FS"/>
+        <rect x="540" y="248" width="104" height="60" rx="8" fill="#FFFFFF" stroke="#E8E3DC" data-page-node-id="uRQcjElZtPbtCoEv2KrOkS"/>
+        <text class="svgmono" x="552" y="270" font-size="10.5" font-weight="600" fill="#292524" data-page-node-id="cwrccHHAZIGxEMglEMhc7Z">MEMORY.md</text>
+        <text class="svgtext" x="552" y="288" font-size="11" fill="#78716C" data-page-node-id="AJDhyus2CbMDtTOXYpaC7V">项目策展笔记</text>
+        <text class="svgtext" x="340" y="342" font-size="12" fill="#A8A29E" text-anchor="middle" data-page-node-id="CPML8VE7wzeuK6IQwE00wu">图 4 · 三层作用域各司其职：画像跟账号走，偏好跟人走，日志跟项目走</text>
+      </svg>
+    </figure>
+    <p class="note" data-page-node-id="gd2btBFFYFw9N3JRcBwWFS">检索策略按层分化：云端靠服务端排序（历史对话检索），本地靠「会话启动注入 + 按需读文件」。写入则克制——明确要求「记住」才落盘，项目日志在实质性工作后追加。</p>
+  </section>
+
+  <!-- 05 -->
+  <section id="s5" data-page-node-id="K13XkZKs7aEYzLvgS5GLJM">
+    <h2 data-page-node-id="HZtqDUhjS7sgrhlj0J5yAv"><span class="no" data-page-node-id="Dp4EpE3AnERzAAfdUAfMpB">05</span>铁律</h2>
+    <ol class="rules" data-page-node-id="b8DS2bqFkKfKBkZfhGxV6a">
+      <li data-page-node-id="at4eA8faW7RhDyCa14mbo8"><div data-page-node-id="eGdCs5jal5f2dQFIXh6wOZ"><b data-page-node-id="UqgsEnY5uZjDluioWvA73z">记忆是检索问题，不是存储问题</b><span data-page-node-id="W8iuf3pdHGlsjTXEv7rKH2">存了取不回等于没存；检索打分（新近度·重要性·相关性）决定记忆质量。</span></div></li>
+      <li data-page-node-id="9YZ5W9O9Fu2Mh6TR2cGapU"><div data-page-node-id="LvIxJEsKaWGYUBHhiOzsYL"><b data-page-node-id="mvBfg9LE8wH8nZ4kpdHLrk">分层是唯一出路</b><span data-page-node-id="Z8q4Rv3gc7P7ay0xjCHBMV">小而快的上下文 + 大而慢的外部存储，在两者之间换入换出——MemGPT 的虚拟内存思想。</span></div></li>
+      <li data-page-node-id="wBMTQkyHG3QtZ2KzxE6D5n"><div data-page-node-id="JfKE2RoKusMAoNl70hMBtQ"><b data-page-node-id="InVO6VXmIXWZXtBxEIwbdX">必须会遗忘</b><span data-page-node-id="eJviEYQ1O2Cohwt0TzMM5H">追加式日志必须配蒸馏/压缩，否则旧记忆的噪声淹没新任务的信号。</span></div></li>
+      <li data-page-node-id="Mw2ikFsqOSqGyjCgQWzhkx"><div data-page-node-id="uJDP7ptcsLrnGWTIGn3zCu"><b data-page-node-id="ys1P8gH1lNiTSlmIB0FLHb">作用域决定归属</b><span data-page-node-id="fyrhXR2C4pZuCHYbT1qR6D">用户偏好放用户级，项目约定放工作空间级，长期画像归服务端——放错层就会「换个项目就失忆」。</span></div></li>
+      <li data-page-node-id="7hS47ij1KgHxvgYD0vw9qB"><div data-page-node-id="2jIEUNNg1OxkzcxwzUmFx6"><b data-page-node-id="K7rl4UIcV1tO66oPRvUWpx">显式记忆优于静默记忆</b><span data-page-node-id="703swrY1Fby56yqhsdsHsI">明确说「记住」才写入：可控、可审计、可清理；静默自学习容易记住错的且删不掉。</span></div></li>
+    </ol>
+  </section>
+
+  <!-- 06 -->
+  <section id="s6" data-page-node-id="HGLjnbKVBRKwhUVfRv97GG">
+    <h2 data-page-node-id="URfDFaiOVbzKzkR2PU29DU"><span class="no" data-page-node-id="Xkvhl0JyEzHexEGTG5gP0R">06</span>溯源</h2>
+    <div class="srcs" data-page-node-id="jOVSzGVD2GwZ60tsXpwFkH">
+      <div class="src" data-page-node-id="y6w2XYobdYJCa26eMpizwD">
+        <h3 data-page-node-id="7rBPuHw094jG5Xp2aZFRxs">Generative Agents: Interactive Simulacra of Human Behavior</h3>
+        <p data-page-node-id="oO3DEesJqlb0agUPMqBFHU">Park et al. · UIST 2023 · 记忆流、三因子检索打分、反思机制的原始出处。</p>
+        <a href="https://arxiv.org/abs/2304.03442" target="_blank" data-page-node-id="ENQ6CXnK959MpLC9AODzsk">arxiv.org/abs/2304.03442</a>
+      </div>
+      <div class="src" data-page-node-id="FGHoGhk2jCbVUESuLQu2wx">
+        <h3 data-page-node-id="fBAkZhu6NqHsI2fltnsvSB">MemGPT: Towards LLMs as Operating Systems</h3>
+        <p data-page-node-id="yCuhiUzlli4tlpn0Dr4zoI">Packer et al. · 2023 · 主上下文 / 检索库 / 归档库的 OS 式分层记忆与虚拟上下文管理。</p>
+        <a href="https://arxiv.org/abs/2310.08560" target="_blank" data-page-node-id="4iA1PP0CuzRcKRXZslbV9e">arxiv.org/abs/2310.08560</a>
+      </div>
+      <div class="src" data-page-node-id="IMkJisMm1WOELxWgTX6xhi">
+        <h3 data-page-node-id="WhGwl2WnDBYh0SCFAoPxCV">Anthropic · Memory Tool 官方文档</h3>
+        <p data-page-node-id="P52STS2Fu3eB4hZuLMuPlU">/memories 目录、客户端托管存储、just-in-time 按需读取的文件式记忆设计。</p>
+        <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool" target="_blank" data-page-node-id="gpWAWCzujHJMJceraeLeIK">platform.claude.com/docs/.../memory-tool</a>
+      </div>
+      <div class="src" data-page-node-id="3nwIwBveDtpW37GFst7Osx">
+        <h3 data-page-node-id="pS2WYt6rrihQtjp8S6YPjE">Anthropic · Context Engineering Cookbook</h3>
+        <p data-page-node-id="jyFAEuo7WS7kX5eZqZdstA">compaction（压缩）/ tool clearing（清理）/ memory（记忆）三大上下文策略的官方对照。</p>
+        <a href="https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools" target="_blank" data-page-node-id="mGkJkw9IvGI1AE25rZCuch">platform.claude.com/cookbook/...</a>
+      </div>
+      <div class="src" data-page-node-id="ZWdJtzDziKdfAoA9aQaf16">
+        <h3 data-page-node-id="WvwN4ZTLdkyjRjGRyNGPtc">WorkBuddy 官方文档</h3>
+        <p data-page-node-id="cNtlQmdOywgXX1eHGMRCuI">产品定位与记忆功能入口（设置 · 记忆 · 生成对话记忆）。</p>
+        <a href="https://www.workbuddy.cn/docs/workbuddy/Quickstart" target="_blank" data-page-node-id="rCndf41XnGeVg2MwnyWf5A">workbuddy.cn/docs/workbuddy/Quickstart</a>
+      </div>
+      <div class="src" data-page-node-id="tOeiXXucIBTfTMA8LQ4uPl">
+        <h3 data-page-node-id="B2dXUdRT2Bcluy4p2AtJbn">WorkBuddy 记忆架构深读（第三方交叉验证）</h3>
+        <p data-page-node-id="2kZdaW2HBfeh1dThZJSgTf">三层记忆 + 身份文件的文件级拆解，与官方文档及设置界面相互印证。</p>
+        <a href="https://cloud.tencent.com/developer/article/2671974" target="_blank" data-page-node-id="kCrivVYkLNF01kclVqlmXZ">cloud.tencent.com/developer/article/2671974</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section id="s7" data-page-node-id="gdpTnwAkwgYCgN7AREB5wY">
+    <h2 data-page-node-id="qKFi5t8Neh5Kh2YORQvGO1"><span class="no" data-page-node-id="JSUBCI9WVMTOoBoC4xo27s">07</span>自测 · 六题三级递进</h2>
+    <div id="quiz" data-page-node-id="bxjO43YXUk4kH8OEvjOInl"></div>
+    <div class="result" id="result" style="display:none;" data-page-node-id="Dur1HgkTeSwXE9FJnDBrAy"></div>
+  </section>
+
+  <footer data-page-node-id="n4X0W3Eu5iUOIBIjKKw9zv">learn-studio · guide 模式 · 2026-09-09 生成 · 每个事实可在第 06 节溯源验证</footer>
+</div>
+
+<script>
+(function(){
+  var QS = [
+    { lv:"基础 · 识别", sec:"01",
+      q:"记忆系统要解决的根本问题是什么？",
+      opts:[
+        "模型参数量不足，需要外挂存储补齐",
+        "上下文窗口有限，且会话结束即失忆",
+        "模型推理速度太慢，需要缓存加速",
+        "工具调用不稳定，需要日志回放"
+      ],
+      ans:1,
+      why:"LLM 本身无状态、窗口有限。记忆把经验外置到上下文之外，新会话按需取回。",
+      back:"回到 01 重看两张对照图" },
+    { lv:"基础 · 识别", sec:"02",
+      q:"Generative Agents 的检索打分由哪三个因子组成？",
+      opts:[
+        "速度 · 精度 · 召回",
+        "频率 · 时间 · 字数",
+        "新近度 · 重要性 · 相关性",
+        "标题 · 标签 · 摘要"
+      ],
+      ans:2,
+      why:"新近度（指数衰减）+ 重要性（LLM 打分）+ 相关性（向量余弦相似），归一化后求和取最高分。",
+      back:"回到 02 看左列公式" },
+    { lv:"进阶 · 理解", sec:"02",
+      q:"关于 MemGPT 的分层设计，正确的说法是？",
+      opts:[
+        "把全部历史对话塞进上下文窗口",
+        "上下文满了就随机丢弃最旧的对话",
+        "归档库只存向量，不存原文",
+        "主上下文放当前相关内容，外部检索库与归档库按需换入换出"
+      ],
+      ans:3,
+      why:"OS 虚拟内存思想：内存（主上下文）不够，就在内存与磁盘（外部存储）之间换页。归档库存完整原文。",
+      back:"回到 02 看中列的双向箭头" },
+    { lv:"进阶 · 理解", sec:"04",
+      q:"WorkBuddy 的云端画像为什么「本地改不动」？",
+      opts:[
+        "画像由服务端生成并注入系统提示，AI 只读，本地改动会被下次会话覆盖",
+        "画像文件被系统加密，无法编辑",
+        "本地网络权限不足，连不上服务器",
+        "画像存在项目目录里，路径太深"
+      ],
+      ans:0,
+      why:"云端记忆归服务端所有，每次会话自动注入；它是「服务器学到的你」，不是「AI 写下的你」。",
+      back:"回到 04 看第一层的只读标注" },
+    { lv:"挑战 · 应用", sec:"04",
+      q:"换了新电脑后，AI 突然不记得某项目的技术约定了。最可能的原因与对策是？",
+      opts:[
+        "模型升级了，记忆格式不兼容，无解",
+        "需要重新注册账号才能找回记忆",
+        "云端画像损坏，必须重置全部记忆",
+        "项目约定存在工作空间级 MEMORY.md，是本地文件；把项目的 .workbuddy/memory/ 随项目迁移，或重述一遍关键约定"
+      ],
+      ans:3,
+      why:"工作空间记忆跟着项目目录走，不跨设备；云端画像虽跨设备但只是摘要，不含项目细节。这是「作用域决定归属」的直接推论。",
+      back:"回到 04 + 05 的第 4 条铁律" },
+    { lv:"挑战 · 应用", sec:"03",
+      q:"记忆越积越多，AI 开始答非所问、注意力涣散。依据记忆系统设计原理，应如何治理？",
+      opts:[
+        "换一个上下文窗口更大的模型",
+        "彻底停用所有记忆功能",
+        "蒸馏压缩：旧日志按主题提炼进长期记忆后清理，控制活跃条数，保留高信号",
+        "把全部记忆导出成文档就算治理完成"
+      ],
+      ans:2,
+      why:"四步循环中「蒸馏」就是聪明的遗忘——Generative Agents 的反思、Anthropic 的 compaction、WorkBuddy 的 30 天蒸馏，都是同一个原理。导出而不清理，噪声仍在原处。",
+      back:"回到 03 的循环图 + 05 的第 3 条铁律" }
+  ];
+
+  var picked = [];
+  for (var i = 0; i < QS.length; i++) picked.push(-1);
+  var box = document.getElementById("quiz");
+  var LETTERS = ["A","B","C","D"];
+
+  QS.forEach(function(item, i){
+    var card = document.createElement("div");
+    card.className = "qcard";
+
+    var meta = document.createElement("div");
+    meta.className = "qmeta";
+    meta.textContent = "第 " + (i+1) + " 题 · " + item.lv;
+    card.appendChild(meta);
+
+    var qt = document.createElement("div");
+    qt.className = "qtext";
+    qt.textContent = item.q;
+    card.appendChild(qt);
+
+    var opts = document.createElement("div");
+    opts.className = "opts";
+    item.opts.forEach(function(o, j){
+      var b = document.createElement("button");
+      b.className = "opt";
+      var l = document.createElement("span");
+      l.className = "l";
+      l.textContent = LETTERS[j];
+      var t = document.createElement("span");
+      t.textContent = o;
+      b.appendChild(l);
+      b.appendChild(t);
+      b.addEventListener("click", function(){ pick(i, j); });
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var ex = document.createElement("div");
+    ex.className = "explain";
+    ex.style.display = "none";
+    card.appendChild(ex);
+
+    box.appendChild(card);
+  });
+
+  function pick(i, j){
+    if (picked[i] >= 0) return;
+    picked[i] = j;
+    var card = box.children[i];
+    var opts = card.querySelectorAll(".opt");
+    var item = QS[i];
+    for (var k = 0; k < opts.length; k++){
+      var btn = opts[k];
+      btn.disabled = true;
+      if (k === item.ans) btn.classList.add("right");
+      else if (k === j) btn.classList.add("wrong");
+      else btn.classList.add("dim");
+    }
+    var ex = card.querySelector(".explain");
+    var head = (j === item.ans) ? "答对了。" : "答错了。";
+    ex.innerHTML = "<b>" + head + "</b>" + item.why + "　→ " + item.back;
+    ex.style.display = "block";
+    checkDone();
+  }
+
+  function checkDone(){
+    for (var i = 0; i < picked.length; i++){
+      if (picked[i] < 0) return;
+    }
+    var total = 0, byLv = {"基础 · 识别":0, "进阶 · 理解":0, "挑战 · 应用":0};
+    var maxLv = {"基础 · 识别":0, "进阶 · 理解":0, "挑战 · 应用":0};
+    QS.forEach(function(item, i){
+      maxLv[item.lv]++;
+      if (picked[i] === item.ans){ total++; byLv[item.lv]++; }
+    });
+    var verdict;
+    if (total === 6) verdict = "全部正确——记忆系统的存取循环已经内化，可以直接去读第 06 节的论文原文了。";
+    else if (total >= 4) verdict = "扎实——回看错题对应的小节补齐细节即可。";
+    else if (total >= 2) verdict = "及格——建议从 01 开始，沿四步循环重新走一遍。";
+    else verdict = "别急——先记住一句话：记忆是检索问题，不是存储问题。";
+    var r = document.getElementById("result");
+    r.style.display = "block";
+    var h = document.createElement("h3");
+    h.textContent = "得分 " + total + " / 6";
+    var p1 = document.createElement("p");
+    p1.innerHTML = "基础 " + byLv["基础 · 识别"] + "/" + maxLv["基础 · 识别"]
+      + " · 进阶 " + byLv["进阶 · 理解"] + "/" + maxLv["进阶 · 理解"]
+      + " · 挑战 " + byLv["挑战 · 应用"] + "/" + maxLv["挑战 · 应用"];
+    var p2 = document.createElement("p");
+    p2.style.marginTop = "6px";
+    p2.innerHTML = "<span class=\"big\">" + verdict + "</span>";
+    r.appendChild(h);
+    r.appendChild(p1);
+    r.appendChild(p2);
+  }
+})();
+</script>
+</body>
+</html>

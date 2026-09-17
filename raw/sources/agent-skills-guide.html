@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Skills · 学习手册</title>
+<style>
+  :root{
+    --bg:#FAF9F7; --card:#FFFFFF; --border:#E8E3DC;
+    --ink:#292524; --ink2:#78716C; --ink3:#A8A29E;
+    --accent:#C4633F; --accent-soft:#F7EBE4; --accent-line:#E9D5C9;
+    --ok:#3D7A50; --ok-soft:#EDF4EF; --bad:#B4433A; --bad-soft:#F9EEEC;
+    --mono:"Cascadia Code",Consolas,"Courier New",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px 96px}
+
+  /* ---------- header ---------- */
+  header{padding:88px 0 64px;border-bottom:1px solid var(--border)}
+  .eyebrow{font-size:13px;letter-spacing:.25em;color:var(--accent);font-weight:600;margin-bottom:18px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:52px;font-weight:400;letter-spacing:-.01em;line-height:1.15}
+  .sub{margin-top:18px;font-size:19px;color:var(--ink2)}
+  .meta{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px}
+  .chip{font-size:13px;color:var(--ink2);border:1px solid var(--border);border-radius:999px;padding:5px 14px;background:var(--card)}
+
+  /* ---------- sections ---------- */
+  section{padding:64px 0 8px}
+  .secnum{font-family:Georgia,serif;font-size:15px;color:var(--accent);letter-spacing:.2em;margin-bottom:10px}
+  h2{font-size:26px;font-weight:600;letter-spacing:-.01em;margin-bottom:12px}
+  .lead{color:var(--ink2);font-size:17px;max-width:620px}
+  .lead b{color:var(--ink);font-weight:600}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-top:28px}
+  .caption{font-size:13.5px;color:var(--ink3);margin-top:14px;text-align:center}
+
+  /* ---------- anatomy ---------- */
+  .anatomy{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px}
+  @media(max-width:640px){.anatomy{grid-template-columns:1fr}}
+  .tree{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 26px;font-family:var(--mono);font-size:14.5px;line-height:2.15}
+  .tree .dir{color:var(--ink);font-weight:700}
+  .tree .req{color:var(--accent);font-weight:700}
+  .tree .opt{color:var(--ink2)}
+  .tree .note{color:var(--ink3);font-family:inherit;font-size:13px;margin-left:14px}
+  .skillmd{background:#26221F;border-radius:14px;padding:24px 26px;font-family:var(--mono);font-size:13.5px;line-height:1.95;color:#D6CFC7;overflow-x:auto}
+  .skillmd .fm{color:#E8A87C}
+  .skillmd .k{color:#9DB8A4}
+  .skillmd .c{color:#6E675F}
+  .skillmd .v{color:#D6CFC7}
+
+  /* ---------- rules ---------- */
+  .rules{margin-top:28px;display:flex;flex-direction:column;gap:0}
+  .rule{display:flex;gap:20px;padding:20px 4px;border-bottom:1px solid var(--border);align-items:baseline}
+  .rule:last-child{border-bottom:none}
+  .rule .rn{font-family:Georgia,serif;color:var(--accent);font-size:15px;min-width:26px;font-weight:700}
+  .rule .rt{font-size:16.5px}
+  .rule .rt b{font-weight:650}
+  .rule .rd{color:var(--ink2);font-size:14.5px;margin-top:2px}
+  .rule code{font-family:var(--mono);font-size:.9em;background:var(--accent-soft);color:var(--accent);padding:1px 7px;border-radius:5px}
+
+  /* ---------- sources ---------- */
+  .src{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+  .src a{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;text-decoration:none;color:var(--ink);transition:border-color .15s}
+  .src a:hover{border-color:var(--accent)}
+  .src .st{font-weight:600;font-size:15.5px}
+  .src .sd{color:var(--ink2);font-size:13.5px;margin-top:3px}
+  .src .sl{font-family:var(--mono);font-size:12.5px;color:var(--accent);margin-top:7px;word-break:break-all}
+
+  /* ---------- quiz ---------- */
+  #quiz{margin-top:28px}
+  .qlevel{display:inline-block;font-size:12px;letter-spacing:.15em;font-weight:700;border-radius:6px;padding:3px 10px;margin-bottom:14px}
+  .lv1{background:var(--accent-soft);color:var(--accent)}
+  .lv2{background:var(--accent-soft);color:var(--accent)}
+  .lv3{background:#F2E8E2;color:#8A4A2F}
+  .qq{font-size:18px;font-weight:600;line-height:1.6}
+  .qidx{color:var(--ink3);font-weight:400;font-size:14px;margin-right:8px}
+  .opts{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+  .opts .opt{text-align:left;background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:14px 18px;font-size:15.5px;color:var(--ink);cursor:pointer;font-family:inherit;line-height:1.55;transition:border-color .12s,background .12s}
+  .opts .opt:hover:not(:disabled){border-color:var(--accent)}
+  .opts .opt:disabled{cursor:default}
+  .opts .opt.right{border-color:var(--ok);background:var(--ok-soft)}
+  .opts .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .opts .opt .tag{font-size:12px;font-weight:700;margin-right:10px;color:var(--ink3)}
+  .explain{margin-top:18px;border-left:3px solid var(--accent);background:var(--card);padding:14px 18px;font-size:14.5px;color:var(--ink2);border-radius:0 10px 10px 0}
+  .explain b{color:var(--ink)}
+  .btnrow{margin-top:22px;display:flex;justify-content:flex-end}
+  .btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:11px 26px;font-size:15px;cursor:pointer;font-family:inherit}
+  .btn:hover{background:#44403C}
+  .btn:disabled{background:var(--border);cursor:default}
+  .result{text-align:center;padding:30px 0 10px}
+  .result .score{font-family:Georgia,serif;font-size:56px;color:var(--accent)}
+  .result .verdict{color:var(--ink2);margin-top:8px}
+
+  footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--border);font-size:13px;color:var(--ink3)}
+  footer a{color:var(--accent);text-decoration:none}
+  svg{display:block;width:100%;height:auto}
+  .svgtext{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">学 习 手 册 · 溯 源 版</div>
+  <h1>Agent Skills</h1>
+  <p class="sub">一个文件夹，把通用智能体变成专家。</p>
+  <div class="meta">
+    <span class="chip">Anthropic · 2025-10-16 首发</span>
+    <span class="chip">2025-12-18 成为开放标准</span>
+    <span class="chip">核心：SKILL.md + 渐进式披露</span>
+  </div>
+</header>
+
+<!-- ============ 01 它是什么 ============ -->
+<section>
+  <div class="secnum">01</div>
+  <h2>它是什么</h2>
+  <p class="lead">Skill 是<b>一个目录</b>，里面放着指令、脚本和资源——相当于<b>给新员工写的一份入职指南</b>。最小形态只需一个文件。</p>
+
+  <div class="anatomy">
+    <div class="tree">
+      <span class="dir">pdf-skill/</span><br>
+      ├─ <span class="req">SKILL.md</span><span class="note">必需 · 元数据 + 指令</span><br>
+      ├─ <span class="opt">forms.md</span><span class="note">可选 · 深度参考</span><br>
+      ├─ <span class="opt">scripts/</span><span class="note">可选 · 确定性代码</span><br>
+      └─ <span class="opt">assets/</span><span class="note">可选 · 模板资源</span>
+    </div>
+    <div class="skillmd">
+      <span class="c"># SKILL.md 的开头必须是 YAML 元数据</span><br>
+      <span class="fm">---</span><br>
+      <span class="k">name</span>: <span class="v">pdf-processing</span><br>
+      <span class="k">description</span>: <span class="v">填写 PDF 表单…</span><br>
+      <span class="v">当用户提到 PDF 或表单时使用</span><br>
+      <span class="fm">---</span><br>
+      <span class="c"># 以下是 Markdown 指令正文</span><br>
+      <span class="v"># Quick start …</span><br>
+      <span class="v"># 表单细则见 forms.md</span>
+    </div>
+  </div>
+  <p class="caption">▲ 一个真实形态的 Skill（Anthropic 官方 PDF 示例的简化）</p>
+</section>
+
+<!-- ============ 02 渐进式披露 ============ -->
+<section>
+  <div class="secnum">02</div>
+  <h2>渐进式披露 —— 核心设计</h2>
+  <p class="lead">不是一次全读，而是<b>像翻书</b>：先看封面简介，再翻目录，最后才读需要的那一章。装几百个 Skill 也不撑爆上下文。</p>
+
+  <div class="card">
+    <svg viewBox="0 0 680 328" xmlns="http://www.w3.org/2000/svg">
+      <!-- L1 -->
+      <text x="20" y="40" class="svgtext" font-size="13" fill="#C4633F" font-weight="700">L1</text>
+      <text x="52" y="40" class="svgtext" font-size="15" fill="#292524" font-weight="600">元数据 · name + description</text>
+      <rect x="20" y="52" width="150" height="30" rx="6" fill="#F7EBE4" stroke="#E9D5C9"/>
+      <text x="95" y="72" class="svgtext" font-size="12.5" fill="#C4633F" text-anchor="middle" font-weight="600">~100 tokens</text>
+      <text x="190" y="72" class="svgtext" font-size="13" fill="#78716C">启动即加载 · 写入系统提示</text>
+      <!-- L2 -->
+      <text x="20" y="140" class="svgtext" font-size="13" fill="#C4633F" font-weight="700">L2</text>
+      <text x="52" y="140" class="svgtext" font-size="15" fill="#292524" font-weight="600">指令 · SKILL.md 正文</text>
+      <rect x="20" y="152" width="330" height="30" rx="6" fill="#C4633F"/>
+      <text x="185" y="172" class="svgtext" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-weight="600">建议 &lt; 500 行</text>
+      <text x="370" y="172" class="svgtext" font-size="13" fill="#78716C">任务匹配时才读取</text>
+      <!-- L3 -->
+      <text x="20" y="240" class="svgtext" font-size="13" fill="#C4633F" font-weight="700">L3</text>
+      <text x="52" y="240" class="svgtext" font-size="15" fill="#292524" font-weight="600">资源 · references / scripts / assets</text>
+      <rect x="20" y="252" width="500" height="30" rx="6" fill="none" stroke="#A8A29E" stroke-dasharray="6 5"/>
+      <text x="270" y="272" class="svgtext" font-size="12.5" fill="#78716C" text-anchor="middle">按需读取 · 用不到 = 0 token</text>
+      <!-- metaphor -->
+      <text x="20" y="316" class="svgtext" font-size="13.5" fill="#A8A29E">书的隐喻：封面简介 → 目录 → 指定章节</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ 03 运行全程 ============ -->
+<section>
+  <div class="secnum">03</div>
+  <h2>一次任务的全程</h2>
+  <p class="lead">用户说「帮我填这份 PDF 表单」，上下文窗口这样变化：</p>
+
+  <div class="card">
+    <svg viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg">
+      <!-- step 1 -->
+      <text x="20" y="34" class="svgtext" font-size="13.5" fill="#78716C"><tspan font-weight="700" fill="#292524">① 启动</tspan>　只有元数据在场</text>
+      <rect x="20" y="44" width="160" height="26" rx="5" fill="#EEE9E3"/>
+      <text x="100" y="61" class="svgtext" font-size="11.5" fill="#78716C" text-anchor="middle">系统提示</text>
+      <rect x="186" y="44" width="120" height="26" rx="5" fill="#F7EBE4" stroke="#E9D5C9"/>
+      <text x="246" y="61" class="svgtext" font-size="11.5" fill="#C4633F" text-anchor="middle" font-weight="600">Skill 元数据</text>
+      <rect x="312" y="44" width="200" height="26" rx="5" fill="#EEE9E3"/>
+      <text x="412" y="61" class="svgtext" font-size="11.5" fill="#78716C" text-anchor="middle">用户：「帮我填 PDF 表单」</text>
+      <!-- step 2 -->
+      <text x="20" y="128" class="svgtext" font-size="13.5" fill="#78716C"><tspan font-weight="700" fill="#292524">② 触发</tspan>　匹配成功，读入 SKILL.md 正文</text>
+      <rect x="20" y="138" width="160" height="26" rx="5" fill="#EEE9E3"/>
+      <rect x="186" y="138" width="120" height="26" rx="5" fill="#F7EBE4" stroke="#E9D5C9"/>
+      <rect x="312" y="138" width="200" height="26" rx="5" fill="#EEE9E3"/>
+      <rect x="518" y="138" width="142" height="26" rx="5" fill="#C4633F"/>
+      <text x="589" y="155" class="svgtext" font-size="11.5" fill="#fff" text-anchor="middle" font-weight="600">+ SKILL.md</text>
+      <!-- step 3 -->
+      <text x="20" y="222" class="svgtext" font-size="13.5" fill="#78716C"><tspan font-weight="700" fill="#292524">③ 深入</tspan>　正文指向 forms.md，按需再读</text>
+      <rect x="20" y="232" width="160" height="26" rx="5" fill="#EEE9E3"/>
+      <rect x="186" y="232" width="120" height="26" rx="5" fill="#F7EBE4" stroke="#E9D5C9"/>
+      <rect x="312" y="232" width="200" height="26" rx="5" fill="#EEE9E3"/>
+      <rect x="518" y="232" width="70" height="26" rx="5" fill="#C4633F"/>
+      <text x="553" y="249" class="svgtext" font-size="11" fill="#fff" text-anchor="middle">正文</text>
+      <rect x="592" y="232" width="68" height="26" rx="5" fill="#E0A488"/>
+      <text x="626" y="249" class="svgtext" font-size="11" fill="#fff" text-anchor="middle">+ forms</text>
+      <!-- step 4 -->
+      <text x="20" y="316" class="svgtext" font-size="13.5" fill="#78716C"><tspan font-weight="700" fill="#292524">④ 执行</tspan>　脚本在磁盘上运行，只有输出进入上下文</text>
+      <rect x="20" y="326" width="130" height="26" rx="5" fill="none" stroke="#A8A29E" stroke-dasharray="5 4"/>
+      <text x="85" y="343" class="svgtext" font-size="11" fill="#78716C" text-anchor="middle">fill_form.py（磁盘）</text>
+      <line x1="155" y1="339" x2="235" y2="339" stroke="#A8A29E" stroke-width="1.5" marker-end="url(#arw)"/>
+      <defs><marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#A8A29E" stroke-width="1.5"/></marker></defs>
+      <text x="196" y="330" class="svgtext" font-size="10.5" fill="#A8A29E" text-anchor="middle">执行</text>
+      <rect x="240" y="326" width="180" height="26" rx="5" fill="#C4633F"/>
+      <text x="330" y="343" class="svgtext" font-size="11" fill="#fff" text-anchor="middle">仅输出进入上下文：3 个字段</text>
+    </svg>
+  </div>
+  <p class="caption">▲ 源自 Anthropic 工程博客的时序演示（简化重绘）</p>
+</section>
+
+<!-- ============ 04 写好一个 Skill ============ -->
+<section>
+  <div class="secnum">04</div>
+  <h2>五条铁律</h2>
+  <div class="rules">
+    <div class="rule"><span class="rn">1</span><div>
+      <div class="rt">description 要写清「<b>做什么</b> + <b>何时用</b>」</div>
+      <div class="rd">它是唯一的触发依据。<code>Helps with documents</code> 是反例。</div></div></div>
+    <div class="rule"><span class="rn">2</span><div>
+      <div class="rt">正文 <b>&lt; 500 行</b>，细节拆到引用文件</div>
+      <div class="rd">引用只嵌套一层，直接由 SKILL.md 链接。</div></div></div>
+    <div class="rule"><span class="rn">3</span><div>
+      <div class="rt">只写模型<b>不知道</b>的上下文</div>
+      <div class="rd">简洁是关键——通用知识无需复述。</div></div></div>
+    <div class="rule"><span class="rn">4</span><div>
+      <div class="rt">能用代码解决的，<b>交给脚本</b></div>
+      <div class="rd">确定性操作用代码，比让模型逐字生成更可靠。</div></div></div>
+    <div class="rule"><span class="rn">5</span><div>
+      <div class="rt">只装<b>可信来源</b>的 Skill</div>
+      <div class="rd">Skill 能指挥 agent 调用工具——恶意 Skill 可导致数据外泄。装前审计全部文件。</div></div></div>
+  </div>
+</section>
+
+<!-- ============ 05 溯源 ============ -->
+<section>
+  <div class="secnum">05</div>
+  <h2>原始出处 · 点击验证</h2>
+  <div class="src">
+    <a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills" target="_blank" rel="noopener">
+      <div class="st">Equipping agents for the real world with Agent Skills</div>
+      <div class="sd">概念首发 · Anthropic Engineering · 2025-10-16（本手册的主要依据）</div>
+      <div class="sl">anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills</div>
+    </a>
+    <a href="https://agentskills.io" target="_blank" rel="noopener">
+      <div class="st">Agent Skills 开放标准</div>
+      <div class="sd">跨平台规范 · 2025-12-18 发布，GitHub Copilot / Cursor / Codex CLI 等相继采纳</div>
+      <div class="sl">agentskills.io</div>
+    </a>
+    <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener">
+      <div class="st">Agent Skills Overview</div>
+      <div class="sd">官方文档 · Skill 结构、安全考量与各平台限制</div>
+      <div class="sl">platform.claude.com/docs/en/agents-and-tools/agent-skills/overview</div>
+    </a>
+    <a href="https://docs.anthropic.com/zh-CN/docs/agents-and-tools/agent-skills/best-practices" target="_blank" rel="noopener">
+      <div class="st">Skill 编写最佳实践</div>
+      <div class="sd">官方文档 · 「五条铁律」的出处（中文版可直接读）</div>
+      <div class="sl">docs.anthropic.com/zh-CN/docs/agents-and-tools/agent-skills/best-practices</div>
+    </a>
+    <a href="https://github.com/anthropics/skills" target="_blank" rel="noopener">
+      <div class="st">anthropics/skills</div>
+      <div class="sd">官方开源仓库 · 可直接阅读真实的 SKILL.md 写法</div>
+      <div class="sl">github.com/anthropics/skills</div>
+    </a>
+  </div>
+</section>
+
+<!-- ============ 06 自测 ============ -->
+<section>
+  <div class="secnum">06</div>
+  <h2>自测 · 难度递进</h2>
+  <p class="lead">三级递进：基础（识别）→ 进阶（理解）→ 挑战（应用）。</p>
+  <div class="card" id="quiz"></div>
+</section>
+
+<footer>
+  本手册依据上述原始出处整理，生成于 2026-09-03。概念归属 <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>。
+</footer>
+</div>
+
+<script>
+const QUIZ=[
+  {lv:1,lt:"基础 · 识别",q:"一个 Agent Skill 的最小组成是什么？",
+   o:["一个 API 密钥","一个包含 SKILL.md 的目录","一段系统提示词","一个 MCP 服务器"],a:1,
+   e:"Skill 的最小形态就是<b>一个目录 + 一份 SKILL.md</b>（开头为 YAML 元数据）。不需要服务器，也不需要密钥。"},
+  {lv:1,lt:"基础 · 识别",q:"渐进式披露的三层中，哪一层「始终」占据上下文？",
+   o:["SKILL.md 正文","所有引用文件","name + description 元数据","scripts/ 里的脚本"],a:2,
+   e:"启动时只把每个 Skill 的<b>元数据</b>（约 100 tokens）写入系统提示；正文和资源都按需加载。"},
+  {lv:2,lt:"进阶 · 理解",q:"为什么 scripts/ 里的脚本不占用上下文窗口？",
+   o:["脚本会被自动压缩","Claude 直接执行脚本，只有输出结果进入上下文","脚本在别的模型上运行","脚本不产生任何输出"],a:1,
+   e:"Claude 在文件系统中<b>直接执行</b>脚本，源代码从不进入上下文，只有运行<b>输出</b>被读回。"},
+  {lv:2,lt:"进阶 · 理解",q:"下面哪个 description 写得最合格？",
+   o:["Helps with documents","处理文件的东西","Extract text and tables from PDFs… 当用户提到 PDF 或表单时使用","一个强大的人工智能技能"],a:2,
+   e:"合格的 description 必须同时说明<b>做什么</b>和<b>何时触发</b>——它是 Agent 决定是否加载的唯一依据。"},
+  {lv:3,lt:"挑战 · 应用",q:"你的 SKILL.md 已 480 行，还要加入 300 行「表单填写细则」。最佳做法是？",
+   o:["直接追加，凑到 780 行","删掉旧内容腾出空间","把细则拆到单独文件（如 forms.md），在正文中按需引用","拆成两个互相独立的 Skill"],a:2,
+   e:"官方建议正文 &lt; 500 行。拆出的文件在<b>用到时才被读取</b>，不占常驻上下文——这正是渐进式披露的用法。"},
+  {lv:3,lt:"挑战 · 应用",q:"从网上下载一个陌生 Skill 并安装，最大的风险是？",
+   o:["占用磁盘空间","加载速度变慢","恶意指令诱导 agent 执行与声明用途不符的操作（如数据外泄）","与其他 Skill 的 name 冲突"],a:2,
+   e:"Skill 能指挥 agent 调用工具、执行代码。官方明确：只装可信来源；非装不可时，<b>逐文件审计</b>所有内容。"}
+];
+const box=document.getElementById("quiz");
+let cur=0,score=0,lvScore={1:0,2:0,3:0},lvTotal={1:2,2:2,3:2},answered=false;
+function render(){
+  answered=false;
+  const Q=QUIZ[cur];
+  const lvCls=Q.lv===1?"lv1":(Q.lv===2?"lv2":"lv3");
+  let h=`<span class="qlevel ${lvCls}">${Q.lt}</span>
+    <div class="qq"><span class="qidx">${cur+1} / ${QUIZ.length}</span>${Q.q}</div><div class="opts">`;
+  Q.o.forEach((t,i)=>{h+=`<button class="opt" onclick="pick(${i})"><span class="tag">${"ABCD"[i]}</span>${t}</button>`;});
+  h+=`</div><div id="fb"></div><div class="btnrow"><button class="btn" id="nx" disabled>下一题</button></div>`;
+  box.innerHTML=h;
+  document.getElementById("nx").onclick=next;
+}
+window.pick=function(i){
+  if(answered)return; answered=true;
+  const Q=QUIZ[cur],btns=box.querySelectorAll(".opt");
+  btns.forEach((b,j)=>{b.disabled=true;if(j===Q.a)b.classList.add("right");});
+  if(i===Q.a){score++;lvScore[Q.lv]++;}
+  else btns[i].classList.add("wrong");
+  document.getElementById("fb").innerHTML=`<div class="explain">${i===Q.a?"✓ 正确。":"✗ 再看一眼。"} ${Q.e}</div>`;
+  const nx=document.getElementById("nx");
+  nx.disabled=false; nx.textContent=(cur===QUIZ.length-1)?"查看成绩":"下一题";
+};
+function next(){
+  if(!answered)return;
+  cur++;
+  if(cur<QUIZ.length){render();return;}
+  const v=score===6?"全部正确——你已经掌握 Agent Skills 的核心设计。"
+        :score>=4?"不错——回到标错的章节，重看第 02 节的图。"
+        :"建议从第 01 节重新过一遍，重点理解渐进式披露。";
+  box.innerHTML=`<div class="result">
+    <div class="score">${score} / 6</div>
+    <div style="color:var(--ink2);margin-top:6px;font-size:14px">
+      基础 ${lvScore[1]}/${lvTotal[1]} · 进阶 ${lvScore[2]}/${lvTotal[2]} · 挑战 ${lvScore[3]}/${lvTotal[3]}</div>
+    <div class="verdict">${v}</div>
+    <div class="btnrow" style="justify-content:center;margin-top:26px">
+      <button class="btn" onclick="reset()">重新自测</button></div>
+  </div>`;
+}
+window.reset=function(){cur=0;score=0;lvScore={1:0,2:0,3:0};render();};
+render();
+</script>
+</body>
+</html>

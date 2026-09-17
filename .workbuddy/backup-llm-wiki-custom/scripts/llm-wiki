@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# 便捷入口：./scripts/llm-wiki lint|stats
+# Windows Git Bash 下用 python 直接跑同名 .py
+
+PY="${PYTHON:-python}"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$PY" "$DIR/llm-wiki.py" "$@"

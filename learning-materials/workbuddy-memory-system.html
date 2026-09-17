@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="SZKHcIThe3oZ1FZUao9OtM">
+<head data-page-node-id="Mzb31wBiFjwpXURVe3JJr7">
+<meta charset="UTF-8" data-page-node-id="zSBVOPcTrTEA9HYb2tbm22">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="9Smcvm6NpPsBQXCIBl2xrg">
+<title>WorkBuddy 记忆系统 · 概念学习卡片</title>
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-2:#4a4a4a;
+    --ink-3:#767676;
+    --line:#e3e3e0;
+    --line-2:#d0d0cc;
+    --bg:#fbfbf9;
+    --card:#ffffff;
+    --accent:#b5442e;
+    --accent-soft:#f6ece9;
+    --accent-2:#2f4f6f;
+    --accent-2-soft:#eaeff4;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;padding:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:16px;line-height:1.75;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px 96px}
+
+  header.masthead{
+    padding:56px 0 28px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:8px;
+  }
+  .kicker{
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:14px;
+  }
+  h1{font-size:38px;line-height:1.22;margin:0 0 14px;letter-spacing:-.01em;font-weight:700}
+  h1 .en{display:block;font-size:15px;font-weight:400;color:var(--ink-3);letter-spacing:.04em;margin-top:8px}
+  .lede{font-size:17px;color:var(--ink-2);margin:0 0 18px;max-width:70ch}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:8px 18px;
+    font-size:12.5px;color:var(--ink-3);font-family:var(--mono);
+    padding-top:14px;border-top:1px solid var(--line);
+  }
+
+  section{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:30px 32px;
+    margin-top:20px;
+  }
+  h2{
+    font-size:20px;margin:0 0 18px;padding-bottom:11px;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:baseline;gap:11px;font-weight:700;
+  }
+  h2 .num{
+    font-family:var(--mono);font-size:12px;color:var(--accent);
+    font-weight:700;letter-spacing:.06em;flex:0 0 auto;
+    border:1px solid var(--accent-soft);background:var(--accent-soft);
+    padding:2px 7px;border-radius:2px;
+  }
+  h3{font-size:15.5px;margin:24px 0 9px;font-weight:700}
+  h3:first-of-type{margin-top:6px}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin-bottom:7px}
+  strong{font-weight:700}
+  code{
+    font-family:var(--mono);font-size:13px;
+    background:#f1f1ee;padding:1.5px 5px;border-radius:2px;
+    color:#8a3324;word-break:break-word;
+  }
+  .cite{
+    font-family:var(--mono);font-size:11.5px;color:var(--accent-2);
+    background:var(--accent-2-soft);padding:1px 5px;border-radius:2px;
+    white-space:nowrap;
+  }
+
+  .note{
+    border-left:3px solid var(--accent);
+    background:var(--accent-soft);
+    padding:14px 18px;margin:18px 0;border-radius:0 3px 3px 0;
+    font-size:14.5px;color:var(--ink-2);
+  }
+  .note b{color:var(--ink)}
+  .warn{border-left-color:#8a6d1f;background:#faf5e6}
+
+  table{
+    width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px;
+  }
+  th,td{
+    border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;
+  }
+  th{background:#f4f4f1;font-weight:700;font-size:13.5px}
+  td:first-child{white-space:nowrap}
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  .viz{margin:22px 0 8px}
+  .viz-title{
+    font-size:13px;font-weight:700;letter-spacing:.04em;
+    color:var(--ink-2);margin-bottom:14px;
+    padding-left:10px;border-left:3px solid var(--accent-2);
+  }
+  .viz-caption{
+    font-size:13px;color:var(--ink-3);line-height:1.65;
+    margin-top:12px;padding-top:10px;border-top:1px dashed var(--line-2);
+  }
+  .viz-caption b{color:var(--ink-2)}
+
+  .fams{display:grid;gap:10px}
+  .fam{
+    display:grid;grid-template-columns:150px 1fr;
+    border:1px solid var(--line);border-radius:3px;overflow:hidden;
+  }
+  .fam .lab{
+    padding:13px 14px;font-size:13.5px;font-weight:700;line-height:1.35;
+    display:flex;flex-direction:column;justify-content:center;background:#f4f4f1;
+  }
+  .fam .lab em{display:block;font-style:normal;font-size:10.5px;font-weight:400;color:var(--ink-3);font-family:var(--mono);margin-top:4px}
+  .fam .lab u{text-decoration:none;font-family:var(--mono);font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:2px;display:inline-block;margin-top:7px;align-self:flex-start}
+  .fam .body{padding:12px 16px;font-size:14px;color:var(--ink-2)}
+  .fam .body .path{font-family:var(--mono);font-size:12.5px;color:#8a3324;background:#f1f1ee;padding:1px 5px;border-radius:2px;display:inline-block;margin-bottom:6px}
+  .fam.a{border-color:#c9a99f}
+  .fam.a .lab{background:var(--accent-soft);color:#8a3324}
+  .fam.a .lab u{background:#fff;color:#8a3324}
+  .fam.b{border-color:#a9bcd0}
+  .fam.b .lab{background:var(--accent-2-soft);color:var(--accent-2)}
+  .fam.b .lab u{background:#fff;color:var(--accent-2)}
+  .fam.c{border-color:#c6d3c4}
+  .fam.c .lab{background:#eaf3ea;color:#3f6b46}
+  .fam.c .lab u{background:#fff;color:#3f6b46}
+
+  .flow{display:grid;gap:0}
+  .stage{
+    border:1px solid var(--line);border-left:3px solid var(--accent-2);
+    border-radius:0 3px 3px 0;padding:14px 18px;background:#fcfcfa;
+    position:relative;
+  }
+  .stage + .stage{margin-top:22px}
+  .stage + .stage::before{
+    content:"▼";position:absolute;top:-19px;left:22px;
+    color:var(--line-2);font-size:12px;line-height:1;
+  }
+  .stage .sh{display:flex;align-items:baseline;gap:9px;margin-bottom:7px;flex-wrap:wrap}
+  .stage .sn{
+    font-family:var(--mono);font-size:11px;font-weight:700;
+    background:var(--accent-2-soft);color:var(--accent-2);
+    padding:2px 6px;border-radius:2px;
+  }
+  .stage .st{font-size:14.5px;font-weight:700}
+  .stage .sd{font-size:13.5px;color:var(--ink-2);line-height:1.65}
+  .stage.hot{border-left-color:#8a6d1f}
+  .stage.hot .sn{background:#faf5e6;color:#8a6d1f}
+
+  .q{border-top:1px solid var(--line);padding-top:20px;margin-top:20px}
+  .q:first-of-type{border-top:none;padding-top:0;margin-top:0}
+  .q .qh{font-size:11.5px;font-family:var(--mono);color:var(--accent);font-weight:700;letter-spacing:.06em;margin-bottom:6px}
+  .q .qt{font-weight:700;margin-bottom:10px;font-size:15px}
+  .q ol{padding-left:20px}
+  .q ol li{margin-bottom:5px}
+  details{
+    margin-top:11px;border:1px solid var(--line);border-radius:3px;
+    background:#fafaf8;overflow:hidden;
+  }
+  summary{
+    cursor:pointer;padding:9px 14px;font-size:13px;font-weight:700;
+    color:var(--accent-2);user-select:none;list-style:none;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";font-size:11px}
+  details[open] summary::before{content:"▾ "}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  .ans{padding:13px 16px;font-size:14px;color:var(--ink-2);line-height:1.7}
+  .ans b{color:var(--ink)}
+  .ans ul{padding-left:20px;margin:8px 0 0}
+
+  #sources ol{padding-left:24px}
+  #sources li{margin-bottom:13px;font-size:14.5px;line-height:1.65}
+  #sources a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid #c4d2df;word-break:break-all}
+  #sources a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  #sources .sdesc{display:block;font-size:13px;color:var(--ink-3);margin-top:2px}
+
+  footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3);font-family:var(--mono)}
+  @media (max-width:640px){
+    .wrap{padding:0 16px 64px}
+    h1{font-size:28px}
+    section{padding:22px 18px}
+    .fam{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body data-page-node-id="zpnpzOe1GMUoutKfsy0fuF">
+<div class="wrap" data-page-node-id="2Z4Mw0DDIAn7BP9A0rhHjv">
+
+<header class="masthead" data-page-node-id="jjXwXDel2I9u8JHtAyLg2C">
+  <div class="kicker" data-page-node-id="I065bYUCiCeLb1BYqVqw0I">概念学习卡片 / Concept Learning Card</div>
+  <h1 data-page-node-id="hhdTwBSFiAcnfZrBfZuN6l">WorkBuddy 记忆系统
+    <span class="en" data-page-node-id="jNKAwbzHq4wIJXDuPYp2QY">WorkBuddy Memory System — 官方口径的「记忆」到底是什么，它和本地文件是什么关系</span>
+  </h1>
+  <p class="lede" data-page-node-id="F2qWSnSuNHyX2DFPLoHZxH">一句话定义：WorkBuddy 的「记忆」是一项<strong data-page-node-id="9crgfbyG0iX6nyYU6mnQpz">从会话历史中自动提取个人信息的云端功能</strong>——<br data-page-node-id="9g0fef4URATzd15g98URse">它由模型每晚整理成「记忆数据」，在后续对话中作为背景注入，让它越用越懂你。</p>
+  <div class="meta" data-page-node-id="CcHdKBAnnRmaNQB8bWgqQT">
+    <span data-page-node-id="TnbE9hfvTg3iMMlnViLFJJ">生成日期 2026-09-10</span>
+    <span data-page-node-id="SEG3LrGHr0erkYE1wZKwit">来源 官方文档 4 篇（全部实际抓取）</span>
+    <span data-page-node-id="4h5HDAeSEh7I1LPUxSebZT">本机实测 已核对文件形态</span>
+  </div>
+</header>
+
+<!-- 1 -->
+<section id="goals" data-page-node-id="PGO9DL3jDUiunSthH1ysxG">
+  <h2 data-page-node-id="K1TAIgMOUehBAGC5WTZa1q"><span class="num" data-page-node-id="HJ3aaeJwxWXVtSHZMmU8pM">01</span>学习目标</h2>
+  <p data-page-node-id="6HZVT7EH2QoDRoUFy2Oeqr">学完这份资料，你应该能够：</p>
+  <ol data-page-node-id="sjse8E6rCxolQ4m7yj1FvE">
+    <li data-page-node-id="0dcdSf6G2MCNNrXTQTmwe8"><strong data-page-node-id="WAxg0VIlQ1fvPef1a4XPxP">说清官方定义的「记忆」是什么。</strong>能讲明白它是<strong data-page-node-id="uNQ95DsGl5QmEsSlw9rL7g">从会话历史自动抽取的个人信息</strong>、按晚整理、以「记忆数据」形式注入后续对话，而不是简单地把聊天记录存下来。</li>
+    <li data-page-node-id="9UntUVGRGMcSMmDFBudcsb"><strong data-page-node-id="gFOTjMTt3ju4u1JlFUrty7">分清「记忆」和本机那几个文件的关系。</strong>能区分官方产品功能层面的记忆（在设置里管理）与本地磁盘上的身份文件、工作记忆文件（在文件系统里管理）——这两件事经常被混为一谈。</li>
+    <li data-page-node-id="qCRbcf0QIOpPg34LyWJFQW"><strong data-page-node-id="h7WOnKLIwHJXgjbAq5dUge">掌握开关、查看、编辑、删除、导入这一整套操作。</strong>知道记忆在哪里管、怎么让它记住或忘掉一件事、以及依赖记忆做判断前为什么要先核验。</li>
+  </ol>
+</section>
+
+<!-- 2 -->
+<section id="questions" data-page-node-id="VLbu5NgkFNXY4wZ7vy5kNh">
+  <h2 data-page-node-id="ZwpUe1JQeoprp6bEtrxWBW"><span class="num" data-page-node-id="fuBkU6DETelQBnn0NS34ok">02</span>核心问题</h2>
+  <ol data-page-node-id="jyMN5qGPm8Sb4qcr0w2Pdp">
+    <li data-page-node-id="fA4pM3zjA80Gs9qLlM4Hq2"><strong data-page-node-id="a3vhx3keDRKbL153PFtHfw">「记忆」到底记什么？</strong>——是从聊天里原样存记录，还是抽取成结论？抽取哪几类信息？</li>
+    <li data-page-node-id="ncB6pu4MNh2FpDUBuYi6c8"><strong data-page-node-id="gRdOhUwHBuA2B7YDFgWCJ4">它什么时候更新、存在哪、谁能看见？</strong>——是实时写入还是定时整理？会不会被别人看到？</li>
+    <li data-page-node-id="7G8T4SEOYqFLQuKkObRGTF"><strong data-page-node-id="PEVMwVkUYzC0MEs1oTgDDM">我能控制它吗？</strong>——能看、能改、能删、能关掉吗？关掉之后已经产生的影响能不能撤回？</li>
+    <li data-page-node-id="IVRnm9E6wxb6flj5fSg98O"><strong data-page-node-id="ngpJHxrmBlZ0W2u26Jer51">「记忆」和本地那一堆 <code data-page-node-id="PKO4IFDQ4xo6wdXTdMZqcv">.md</code> 文件是一回事吗？</strong>——如果不是，它们各自管什么？</li>
+  </ol>
+</section>
+
+<!-- 3 -->
+<section id="my-explanation" data-page-node-id="IrJFW0xVKyohD3hBQts4We">
+  <h2 data-page-node-id="VcTuKNQKyak9LCRXjKi1zQ"><span class="num" data-page-node-id="c1GBwpQpeY2VxNPDFrI3ww">03</span>个人解释（第一人称）</h2>
+  <p class="note" data-page-node-id="nV4tqjTYgkTPHEAESIpWIn"><b data-page-node-id="ECENPdRb4ujGndrAa8eqmG">说明：</b>以下为本人的理解表述，用于自我复核；欢迎直接在原文上批注修改。</p>
+  <p data-page-node-id="Bv55uOjtepS0ljFtFlhCwx">我理解 WorkBuddy 的记忆，本质上是一个<strong data-page-node-id="k5CIDqFVamStHbkZ6cHMxu">「背景信息的自动供给系统」</strong>。模型本身没有记忆，它这次能"知道"什么，完全取决于开工前有没有人把背景递到它面前。记忆功能做的就是把这件事自动化：它从我的会话历史里挑出有参考价值的个人信息，抽成条目存起来，下次对话时自动塞进上下文。所以它不是"存聊天记录"，而是<strong data-page-node-id="2zaJonBItxDMLmKBt0U1r6">把流水提炼成结论</strong>。</p>
+  <p data-page-node-id="Z30xBZT2IU1VNeJHNh3gmY">让我觉得设计得比较克制的一点是<strong data-page-node-id="jmBtdXe7xaJkdiRq63onMA">它的更新节奏是"每晚整理"，不是实时写</strong>。我一开始以为说一句话就被立刻记下来了，但官方明确说的是"每晚整理当天会话"。这说明它是批处理式的：白天照常聊，夜里统一抽取。好处是不会在对话中途被写入动作打断，代价是当天说的事，当天不一定马上生效。</p>
+  <p data-page-node-id="RsFagaEj1l28IE3T6IA1q6">另一个让我修正了认知的点是<strong data-page-node-id="TRwWy8F4hArA0vW90xwp7E">「记忆」和本地那些 <code data-page-node-id="nSEV0GtbU7vWHDEqQu044k">.md</code> 文件不是同一套东西</strong>。我原先看到 <code data-page-node-id="8qS1gGFP6zuizx7Q7rbGtM">~/.workbuddy/</code> 下有一堆 Markdown 文件，就以为那就是"记忆系统的存储"。但核对官方文档后我发现：官方讲的「记忆」是一个<strong data-page-node-id="VUTjAOBjwP9IYkG5sGzKom">产品功能</strong>，入口在"设置 → 记忆"里，可以在界面上查看和编辑；而磁盘上的 <code data-page-node-id="QXEzyAfJPFsVXGFRwlIMlX">SOUL.md</code>、<code data-page-node-id="FDjLS0Z7YCdgy3TJJN5PeW">USER.md</code> 这类文件属于<strong data-page-node-id="5tfCxYpDxBK6WHEZvm6xGQ">另一条线</strong>（身份与工作记忆），是文件形态的、可以直接用编辑器改的。官方文档里另外还提到项目级记忆文件 <code data-page-node-id="lwTcazhQ07UHpfrRZ0A4uW">.codebuddy/CODEBUDDY.md</code>，那是随代码库走、可提交到版本控制的团队知识——又是第三个层面。<span class="cite" data-page-node-id="jiHPNoEis6FS7fsbyGF3CP">[来源 2]</span></p>
+  <p data-page-node-id="ErR7NBxZ6w2wo3fkIZ6GZo">所以我现在把它理解成<strong data-page-node-id="fowZI8mDIyDyUefqbrU9UR">三个层面</strong>：产品功能层的「记忆」（界面管理）、本地文件层的身份/工作记忆（文件管理）、项目层的团队知识文件（版本控制管理）。它们可以并存，但职责不同，混着讲就会自相矛盾。这也让我意识到：讲一个产品的机制时，<strong data-page-node-id="GS2b8sFnw1uOSmGxUkBn99">官方口径和本机形态必须分开说</strong>，不能拿肉眼看到的文件去反推官方功能的设计。</p>
+</section>
+
+<!-- 4 -->
+<section id="mechanism" data-page-node-id="qxnBfX4MGD4PazgqUYHjSh">
+  <h2 data-page-node-id="4eV4HadhPwFtvcJv4UuDY8"><span class="num" data-page-node-id="dytXj96Y9jTmb8H6bb8KKp">04</span>核心机制 / 组成</h2>
+
+  <h3 data-page-node-id="cF6DsqUF7eKJCPBcvTFImK">4.1 官方定义：记忆是什么</h3>
+  <p data-page-node-id="pf0krBJ3EWsSjo4Mclgfqu">官方文档对「记忆」的定义很明确：<strong data-page-node-id="3K6iq3F3Qw7zQDT3rs4tkH">记忆功能从你的会话历史中提取具有参考价值的个人信息（事实信息、偏好习惯、人物关系、近期跟进事项等），形成「记忆数据」并定期更新；后续对话或任务执行时，会将与当前请求相关的记忆作为背景信息一并参考。</strong><span class="cite" data-page-node-id="DVOwmHengAIQV9Gqt1z7Wa">[来源 1]</span></p>
+  <p data-page-node-id="jA0Fv17AGOq2EPFdbotPvb">这里有三层意思值得拆开看：</p>
+  <ul data-page-node-id="78xYp7rHb01EctFGuAwRkx">
+    <li data-page-node-id="HlSAALfQqPgADmmJ6LNdUW"><strong data-page-node-id="u5QkDUOdhtNKFfDVr95OXA">来源是会话历史</strong>——不是让你手工填表，而是模型从日常对话里自己抽。</li>
+    <li data-page-node-id="MBRF6KTn2LGXgoTqQWJPUh"><strong data-page-node-id="oJlZPfXEc4QgAiSHz6b7yB">抽取对象是"有参考价值的个人信息"</strong>——官方列举了四类：事实信息、偏好习惯、人物关系、近期跟进事项。</li>
+    <li data-page-node-id="17kjRjEIQanVVr1rpEY1Rv"><strong data-page-node-id="pO9fQYVOSuCRDSoWA5O7qE">使用方式是"注入上下文"</strong>——官方说明有两种用法：① 注入系统提示词作为上下文；② 支持对会话历史的检索（如问它"上周做过什么""之前聊过的 XX"）。<span class="cite" data-page-node-id="uoJtjUyu5lZHzBlFaGiZAS">[来源 1]</span></li>
+  </ul>
+
+  <h3 data-page-node-id="eCJiupul8fqnRj9CZxQEwr">4.2 更新节奏、可见性与隐私</h3>
+  <p data-page-node-id="fsgQ7rX1M5vWrCnbirHIH6">这几点是官方明确写出的，也是最容易记错的部分：</p>
+  <div class="tblwrap" data-page-node-id="GCnENlB4ulsG6AJeAT5FEM">
+  <table data-page-node-id="N2LvDE10oi29SDGDz6Qaee">
+    <thead data-page-node-id="ohXojRj8CE0t0j3DpYHbHC"><tr data-page-node-id="422F4eKVCX2vefXSRoQCaA"><th data-page-node-id="ExLNPPCkslVXZeN77laAxg">维度</th><th data-page-node-id="xwSUsPuDrbHZLLsmOhComF">官方说明</th></tr></thead>
+    <tbody data-page-node-id="BTrLpx1GV597rEh1MezSux">
+      <tr data-page-node-id="e5GBpnk6eFSxyOodWAjGbH"><td data-page-node-id="Ykpq6Ec1pwBYzFO0zjK1fZ">提取频率</td><td data-page-node-id="Nt32FYWAhuF2y60pbapFtE"><strong data-page-node-id="UmOUP7C8MSBaGOctxHzule">每晚整理当天会话</strong>——即批处理，不是实时写入。</td></tr>
+      <tr data-page-node-id="qKnq69BVK7nyLGEddV9yrJ"><td data-page-node-id="8sLiFgrs33EIniARqHBxzT">可见范围</td><td data-page-node-id="8DZfZ6JYBzUT3CGonhYB0l"><strong data-page-node-id="WnvJJgstWzHdVaN8QaCgOM">仅你本人可见</strong>。</td></tr>
+      <tr data-page-node-id="jFzmH6AnF3WUAxsKmuErn9"><td data-page-node-id="luuZmfnvHTe1jBgv3bDHRb">第三方共享</td><td data-page-node-id="byiVFGle17SBI5vX6SLLbL"><strong data-page-node-id="zcyTSceROKqKCIeRZ5GuMa">不涉及</strong>——记忆数据仅用于产品内部为你本人提供个性化服务。</td></tr>
+      <tr data-page-node-id="YnsfKeEZRDKNVcMPWhye9t"><td data-page-node-id="Wb9EIJMclp8if07yVetGPw">积分消耗</td><td data-page-node-id="ROMNOE6WH8xQnRcKxSRI8N"><strong data-page-node-id="5k01rIHzlluOyMtx05tgvt">不消耗</strong>——记忆提取由 WorkBuddy 自费完成，不额外消耗你的 token / 积分。</td></tr>
+      <tr data-page-node-id="T5SwZdbPC88wvGTDWrodqy"><td data-page-node-id="aPCTW7Ny28kEhNI6XJvhw0">默认状态</td><td data-page-node-id="31KoLJJ0P2fDsfQ5bhBqwD">「生成对话记忆」<strong data-page-node-id="S3tWJWzaYE3kE5JevYFIzy">默认开启</strong>。</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="viz" data-page-node-id="lOMzPMxtG6w4aC05D9U9jr">
+    <div class="viz-title" data-page-node-id="zjD3eMhaf9UpGMCFJWndFH">图 1 · 记忆的运行闭环：默认开启 → 每晚提取 → 注入后续对话</div>
+    <div class="flow" data-page-node-id="xo7gZF4GEOmjMei5geW8p8">
+      <div class="stage" data-page-node-id="FOlUDnQROc0rDEEdxUkwMM">
+        <div class="sh" data-page-node-id="1iR9bwLRG0DMoi3L7AOCyL"><span class="sn" data-page-node-id="DI5lrHuVpDMv54rftJ2j2w">起点</span><span class="st" data-page-node-id="FYtrZqx8wwUfFvCHdoLWTU">日常会话（默认开启「生成对话记忆」）</span></div>
+        <div class="sd" data-page-node-id="QvOxm2Dz2hTiRRWhayboJK">你照常和 WorkBuddy 对话、执行任务，不需要为"让它记住"做任何额外操作。</div>
+      </div>
+      <div class="stage hot" data-page-node-id="iYrom1bucrl5MpF5KfpXBE">
+        <div class="sh" data-page-node-id="0CP9csZVrHjd1BGi9OTGI9"><span class="sn" data-page-node-id="QT6sNCQYkWRGMcQaXEgjPA">每晚</span><span class="st" data-page-node-id="S89H4Zy4zk8x3bNrjXDlEr">提取与整理</span></div>
+        <div class="sd" data-page-node-id="XXyvUWxIIwHbKwASjaFB87">模型在夜间整理当天会话，抽取四类个人信息——<strong data-page-node-id="krIciIqStEjeBouqY4qzk7">事实信息、偏好习惯、人物关系、近期跟进事项</strong>，形成「记忆数据」。这一步由 WorkBuddy 自费完成，不消耗你的积分。</div>
+      </div>
+      <div class="stage" data-page-node-id="nH1tV3AUQ1ir7DaCgS0wwQ">
+        <div class="sh" data-page-node-id="h5MgG0NB11N9c6zBeqg1gp"><span class="sn" data-page-node-id="yI1GFal0QoC9DH0GDaY2TY">之后</span><span class="st" data-page-node-id="ACmjD0sJOqp2sDMFBquCqF">作为背景注入</span></div>
+        <div class="sd" data-page-node-id="FHNc8h9m3Trcz3iIKFuIaq">后续对话或任务执行时，与当前请求<strong data-page-node-id="6HFvnIEUFFkM5gkPaU7zHO">相关</strong>的记忆被作为背景一并参考（注入系统提示词），也支持对会话历史的检索式提问。</div>
+      </div>
+      <div class="stage" data-page-node-id="GyEYb6c2jOz55XFGyD5kdh">
+        <div class="sh" data-page-node-id="2PdbQpgHEn9MM3l7u1ftHr"><span class="sn" data-page-node-id="cWpE92eMXd2EXJ2Dfau0qH">随时</span><span class="st" data-page-node-id="jiyyC3ubVsEXZwoDEjuLwC">你来干预</span></div>
+        <div class="sd" data-page-node-id="ZVBoAay4WHgByG4jhoOB6C">在「设置 → 记忆」中查看、编辑（通过对话告诉它记住或忘掉什么）、删除或一键关闭；也可从其他 AI 导入使用习惯。</div>
+      </div>
+    </div>
+    <div class="viz-caption" data-page-node-id="a7CcmCqA07Dh2H73FoygOp"><b data-page-node-id="DzGbKB6yK0eNewYWhjjB4G">图说：</b>记忆不是"说一句就立刻存一条"，而是一条<strong data-page-node-id="is7X2aHqgLsyPcEb4MwyXP">默认开启的夜间批处理闭环</strong>——白天正常会话，夜里由模型抽取四类个人信息形成记忆数据，此后在相关对话中作为背景注入；你随时可以在设置里查看、编辑、删除或关闭。图中"每晚整理""四类信息""不消耗积分"均来自官方文档原文 <span class="cite" data-page-node-id="FX2VTQ5YQBjFIyKG8iRgr6">[来源 1]</span>。</div>
+  </div>
+
+  <h3 data-page-node-id="6MmZmnM5DiN5EX4NMPh4ir">4.3 怎么管：查看 / 编辑 / 删除 / 导入</h3>
+  <p data-page-node-id="nbnekiE53nzE9RWz2THghZ">入口统一在<strong data-page-node-id="7XAzKecBPEVEgtMNDCqxay">头像 → 设置 → 记忆</strong>。<span class="cite" data-page-node-id="En0kBISzNTYzT6W9eOJy5r">[来源 1]</span></p>
+  <div class="tblwrap" data-page-node-id="cdis1FdO8ULL81YArjkDta">
+  <table data-page-node-id="wymRDq2AVIMzw5CQcYoOHg">
+    <thead data-page-node-id="GGcBVtqrfIN9zoTDrsnYP0"><tr data-page-node-id="URZl7g4z3gyRSMRK0ki6oo"><th data-page-node-id="EZYEB1Y4LKEcSniHQqMIUF">操作</th><th data-page-node-id="HXSypUT6QiUL4i7gIMv7fE">怎么做</th></tr></thead>
+    <tbody data-page-node-id="gyeqIDsAP5Qn79rjctEBY7">
+      <tr data-page-node-id="8E92LKtAsQYBrXThoth1Dr">
+        <td data-page-node-id="QPKgbUKS91BapKykvFe3sg">查看</td>
+        <td data-page-node-id="XaCZTscjbBmC1oDvK2aoXt">记忆摘要<strong data-page-node-id="DulFJkIF00fk4vNjogWxCo">每晚重新生成</strong>；打开已生成的记忆即可查看内容。</td>
+      </tr>
+      <tr data-page-node-id="zYVRKPawp9Q3LZq4GbhSxY">
+        <td data-page-node-id="ydVA76Hv8OAhmKCgOUEGr6">编辑</td>
+        <td data-page-node-id="zAJ0ddEOvrihveWJO8XLe0">点击右上角编辑图标，唤起对话框，<strong data-page-node-id="onm4ZOzmoeEZHXXrPsFSlb">用对话的方式</strong>告诉 WorkBuddy 要记住或忘记什么——不需要手动改任何文件。</td>
+      </tr>
+      <tr data-page-node-id="3ZPkkBvGAwWkdEZUl7GpnK">
+        <td data-page-node-id="1GsO7G306AzDRLJhJfFBFT">删除</td>
+        <td data-page-node-id="DNzE97MqgPfa4lXfk484nk">点击右上角删除图标，可<strong data-page-node-id="1xxCLtrjt6obYatxo5aPD1">清空当前记忆</strong>。</td>
+      </tr>
+      <tr data-page-node-id="vd9HE6xOZqqmkIo6hsHRqD">
+        <td data-page-node-id="cIXs49jRhptoQmcWBvVEHI">导入</td>
+        <td data-page-node-id="TQYkGh4VIOz3o3KmDZHV8U">支持同步你在其他 AI 上的使用习惯：点击「开始导入」，把官方给出的示例提示词复制到其他 AI 的对话中，再把结果粘贴回来，点击「添加到记忆」。</td>
+      </tr>
+      <tr data-page-node-id="QPiZuxJ4F0tigF0VPOFH64">
+        <td data-page-node-id="FE1zQX5StGcNhlcvClMGYC">关闭</td>
+        <td data-page-node-id="VDGHyemxMqsUZzKK9gjHi0">可一键关闭；关闭后将<strong data-page-node-id="kA4x7AxhWN3NEB3Y7WGZlG">停止提取新的记忆</strong>。</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note" data-page-node-id="emOs9hE5kTsmrulOYNVUJQ"><b data-page-node-id="c7yQHOI8hhTDl6fkWuiWZi">实践要点：</b>想让 WorkBuddy 记住某件事，最省事的做法不是去翻文件，而是<strong data-page-node-id="4pnyA4f3Yz67EbQQXGP5VZ">直接在对话里说</strong>——例如"记住：这个项目的素材统一放 <code data-page-node-id="HfqFigTdC197NI2puwODqy">learning-materials/</code>"。官方把"编辑记忆"设计成对话式，就是为了让你用自然语言完成这件事。</div>
+
+  <h3 data-page-node-id="1d29jPZeQYM58If8ofFK9u">4.4 三个层面：记忆功能、本地文件、项目知识</h3>
+  <p data-page-node-id="virfAsKX0ZsobkyA0w6XNd">这是本卡片最想厘清的一点。日常听到"WorkBuddy 的记忆"可能指三件不同的事，它们的管理方式完全不同：</p>
+
+  <div class="viz" data-page-node-id="uqZKzchZqGCtxrdFnFF9oP">
+    <div class="viz-title" data-page-node-id="kJPigmoE3j7vaLTDy8LuUY">图 2 · 三个层面：谁在哪管、怎么改</div>
+    <div class="fams" data-page-node-id="QyFys3fcBjnlJ9vwyGY93j">
+      <div class="fam a" data-page-node-id="u3muZA5HDnpcBikXpTuG6r">
+        <div class="lab" data-page-node-id="bsD8Empecskvn7X0K3kF6p">① 记忆功能<em data-page-node-id="NqOSAPFWhKOx7Dza6QXZbr">官方文档的「记忆」</em><u data-page-node-id="VzEtclA9y4YhgSv0P10OOi">界面管理</u></div>
+        <div class="body" data-page-node-id="GLp3IW4kqZdBbh9IGVUlXB">
+          从会话历史自动抽取的个人信息，每晚整理成「记忆数据」。<br data-page-node-id="TPlxVSHTWIHFBWnkGdJBg7">
+          入口：<strong data-page-node-id="EAP63j7EAnJQYK7hx9yp59">头像 → 设置 → 记忆</strong>，可查看 / 对话式编辑 / 删除 / 关闭 / 导入。<br data-page-node-id="fGjemsvLlHw5sO092OSRhd">
+          <em data-page-node-id="THT7kGYyM8xdpSuCyGj8e8">你不直接编辑它的存储文件。</em>
+        </div>
+      </div>
+      <div class="fam b" data-page-node-id="a4DKuatDe8jrqykeyrDXHY">
+        <div class="lab" data-page-node-id="4FfqNeH3wBU3HdBHcKgKpU">② 本地身份与工作记忆<em data-page-node-id="Qw5f7YlJUXB6ndAPss5FUC">文件系统</em><u data-page-node-id="xxclTLkAxpMwC9x1zUKKmC">编辑器直接改</u></div>
+        <div class="body" data-page-node-id="bDuTSDCODPK9C9ii1yoTrQ">
+          <span class="path" data-page-node-id="hw3UjXpvE4KKw0IuMGBFzI">~/.workbuddy/</span> 下的 <code data-page-node-id="vv3PDG8YUACFVygTeX07lC">SOUL.md</code>、<code data-page-node-id="fYDCpwhTlaOlpO7Tg1ifhV">IDENTITY.md</code>、<code data-page-node-id="77r0cj1UmOkWyqk9WiBxc4">USER.md</code>、<code data-page-node-id="Oxl2qDuy1elAf1BG8fTct2">MEMORY.md</code> 等，以及工作区 <code data-page-node-id="2UYbf5stipARrHFn8BAigz">.workbuddy/memory/</code> 下的日志。<br data-page-node-id="WUHTxxGyQgzt8j1eujV18k">
+          这些是<strong data-page-node-id="LuYu6LqZqxD3IFVyDDFjzc">文件形态</strong>，可直接打开编辑（见 4.5 本机实测）。
+        </div>
+      </div>
+      <div class="fam c" data-page-node-id="FUmPAyPwUAcPmW7EEQe6C7">
+        <div class="lab" data-page-node-id="nZxR9feFI6AbMH7n7iwJpI">③ 项目级记忆文件<em data-page-node-id="E9iw9NoOnCxBYR2kOX320F">随代码库走</em><u data-page-node-id="NXAe6zPFIQ271HWrgzW2mW">版本控制</u></div>
+        <div class="body" data-page-node-id="4bfqGQwjgVPOzyz8o5fn54">
+          <span class="path" data-page-node-id="cHrTJZWV8DyXjlNEDbbKrD">.codebuddy/CODEBUDDY.md</span> ——官方定义为<strong data-page-node-id="BECaofAfugW2TN1MT7OZsM">项目级记忆文件</strong>，存储项目架构、约定、常用命令等团队知识，<strong data-page-node-id="dg2iXYpykJuXA8SXKqhvSq">可提交到版本控制</strong>并随项目共享给团队。<span class="cite" data-page-node-id="ts3PZSf4zuZazIx4OcI6ce">[来源 2]</span>
+        </div>
+      </div>
+    </div>
+    <div class="viz-caption" data-page-node-id="Swf6jG8w35nKUD3ZA17jbM"><b data-page-node-id="Za0AjUiHFEXfB42Y352r4y">图说：</b>同一个词「记忆」在三个层面出现：① 产品功能层的记忆，在<strong data-page-node-id="o91ZUYJcNh5GeUQBwJEkE8">设置界面</strong>里管，用对话方式编辑；② 本机磁盘上的身份/工作记忆文件，在<strong data-page-node-id="bRrpMm2BzkHrNCvj9U6GKx">文件系统</strong>里管，用编辑器直接改；③ 项目目录下的 <code data-page-node-id="MoPtLPF0bo58idAx2cS9Ke">.codebuddy/CODEBUDDY.md</code>，随<strong data-page-node-id="In1FojY4TgXFKfbUDvgnmY">版本控制</strong>走，供团队共享。三者可并存、职责不同，混着讲会自相矛盾。<strong data-page-node-id="N0TLjb7NAHbKsrNnvZZzcI">注意：</strong>① 与 ② 的关系（是否同源、如何同步）官方文档未明确说明，本卡片不作推断。</div>
+  </div>
+
+  <h3 data-page-node-id="LhCMBiQGZOs96gKCEBabvG">4.5 本机实测：磁盘上确实存在的是什么</h3>
+  <p data-page-node-id="h8y5wXSd5PouqThbDD0ixp">为避免"把看到的文件当成官方机制的存储"，这里把本机实际核对到的情况原样列出（2026-09-10 实测）：</p>
+  <div class="tblwrap" data-page-node-id="WOhUIFAUb65hRJUYfGrQxo">
+  <table data-page-node-id="G7QnweHeACB0TkxA9T5bw3">
+    <thead data-page-node-id="IJ5fYlQ6hMqzwxtds5xx8C"><tr data-page-node-id="qFkwi7h2mvkcX9NgsDhtkL"><th data-page-node-id="TBqFbEMgEDHTZpCBk70T1S">路径</th><th data-page-node-id="HsCuP040urAd62rGiks1Na">实测结果</th></tr></thead>
+    <tbody data-page-node-id="uuxGiOI8RUbVEqXl1dwROS">
+      <tr data-page-node-id="WBWgqm5mdxuW9akFfOnZXC"><td data-page-node-id="MnmAC0FBmWFBD8P6VpKYHe"><code data-page-node-id="fKCJDN73xVL7jnxAEEps3w">~/.workbuddy/</code></td><td data-page-node-id="zMnPWylwgUDwq59gJaAD9r">存在，含 <code data-page-node-id="wKIfGOCWkA1EwlqU0ODuEX">SOUL.md</code>、<code data-page-node-id="C7VKkEeJPABUaASJFDFzbi">IDENTITY.md</code>、<code data-page-node-id="sJCnOyq6yGT8EITk6LcCGF">USER.md</code>、<code data-page-node-id="xaU9mREnghTROR9HM07HuY">MEMORY.md</code>、<code data-page-node-id="urNjBJwcIuQHOMs3rjG2QO">BOOTSTRAP.md</code>、<code data-page-node-id="p7y5zIvl3za9WSQ6vEr5yM">user-state.json</code> 等。</td></tr>
+      <tr data-page-node-id="6fXNJvL0wHQ3MSBw41SHSw"><td data-page-node-id="OIovLkA7DsrWoOCO2dB50B"><code data-page-node-id="Zi1K7jwdMSZGZAvUTMDeFH">~/.workbuddy/memory/</code></td><td data-page-node-id="kWKKFUUqDkheDT8ck2WenX">存在，内含一份以 <code data-page-node-id="mdT00pk54uMd5DKmGr3C35">uid</code> 命名的 <code data-page-node-id="VmNwEIaEZKpwrQM5EdHzKu">*_memory.md</code>（带 <code data-page-node-id="ynOAV3Usxk0CEA9duPFLGN">Version</code> 号与 <code data-page-node-id="FDWCahCqiNdaOTlDuc9SNy">Last updated</code> 时间戳，标题为「User Memory Profile」），另有 <code data-page-node-id="HWfwpZdeT0iQvMFF45qzI4">.bak</code> 备份。这与官方所述"每晚整理、定期更新"的<strong data-page-node-id="XZksKkCCHEsNpyuUAQx4De">记忆数据</strong>形态吻合。</td></tr>
+      <tr data-page-node-id="COpF3OMjkcRgIecTEwrX9I"><td data-page-node-id="xRpInDqwBiM4hWDOx8On00"><code data-page-node-id="3WbuPbAJGbuFcxNTYvWHRP">{workspace}/.workbuddy/memory/</code></td><td data-page-node-id="qJdJ4TCogjoiqG1pmILm2X">存在，当前含一份 <code data-page-node-id="kjPDfXzih1fti4GqPmWeqi">2026-09-10.md</code>（按日期命名的当日工作日志）。<strong data-page-node-id="I6kVgR59GlRobCz2NiaO1M">未发现</strong>同目录下的 <code data-page-node-id="h5airGWAWihXIGVjIn7Mng">MEMORY.md</code>。</td></tr>
+      <tr data-page-node-id="P2S1vM0h6rki2HIkPqf7YV"><td data-page-node-id="igrk6hfl5C6qTZiOwRCDS7"><code data-page-node-id="qjRVEGLa94EImjqdxcuYTS">.codebuddy/</code>（本项目）</td><td data-page-node-id="FfA19BIqHRCfhtQ2h30eE8"><strong data-page-node-id="jcAOJEGPGrHAaWA8wnlTXG">不存在</strong>。repos 下的其他仓库也均无该目录——说明项目级记忆文件需要按需创建，并非默认生成。</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note warn" data-page-node-id="9Yl9lb7D3wOSDbgxj5t2mL"><b data-page-node-id="VwglSpXxWLvaRrdqBoYgBG">重要提醒：</b>上表的实测结果说明——<strong data-page-node-id="GMCs28HFp7q0eLYuxyMXqD">不要用肉眼看到的文件去反推官方功能的设计</strong>。官方文档描述的「记忆」是产品功能（界面管理），而磁盘上的 <code data-page-node-id="IesJDsyczh3fnK0IFYVfyu">memory/</code> 目录同时容纳了身份文件、工作日志等多种用途的文件。二者关系官方未明确说明，本卡片只陈述各自确凿的部分，不做因果推断。</div>
+</section>
+
+<!-- 5 -->
+<section id="scenarios" data-page-node-id="yAuletJ6xG84laHF669n5a">
+  <h2 data-page-node-id="gwvrOe61MXPAwWYgfZO84n"><span class="num" data-page-node-id="RYzejBi3wcwrlWzDcTBGA9">05</span>应用场景</h2>
+  <p data-page-node-id="6K5AhSW1ENAmVHhHS8VzLJ">一个具体的例子——<strong data-page-node-id="zz7DXo2eIuCFbFgy61YzDO">用 WorkBuddy 长期跟进一项课程建设</strong>：</p>
+  <p data-page-node-id="nBCIEQRuSqycyzBJVpmVfS">假设你连续几周用 WorkBuddy 处理 <code data-page-node-id="3KZIQEeoDDw7NdMdLwrH9j">ads-stats-2025</code> 这个广告统计课程项目。记忆功能会在三个阶段发挥作用：</p>
+  <ol data-page-node-id="QYLtmn9FIJlB7QfdbV9MfT">
+    <li data-page-node-id="R99TN2qXC8Ao1YeAs8YREp"><strong data-page-node-id="igYKfVY4ln5m7hOJbkglLH">白天照常干活：</strong>你让它生成课件卡片、整理素材、修表格。过程中你提到过"这门课的素材放 <code data-page-node-id="15tCqYlkmj6c4OpaJX1nUQ">learning-materials/</code>""我偏好黑白灰加一个强调色""蓉蓉这个项目先放一放"。这些信息当下只是对话内容。</li>
+    <li data-page-node-id="ssanvXUQeZhWIFC5vCu6Yp"><strong data-page-node-id="eFdrSoGycLhs9WPObEnrLQ">夜里自动整理：</strong>当晚，模型整理这些会话，抽取出其中<strong data-page-node-id="mzw7S1NXCbFDg3fWzWN69g">有参考价值的个人信息</strong>——你的设计偏好属于"偏好习惯"，课程安排属于"近期跟进事项"。抽取由 WorkBuddy 自费完成，不消耗你的积分。<span class="cite" data-page-node-id="Ght1ZjoVHTcXsqQErOJay6">[来源 1]</span></li>
+    <li data-page-node-id="JqHxSjGtLoEYhqMqj2xeyc"><strong data-page-node-id="kFt3k8RJ5D1rY9BAu9qh4p">后续自动生效：</strong>过几天你新开一个任务，说"再出一份课程资料"。相关记忆被作为背景注入，它就知道你的配色偏好和输出目录，不用你再交代一遍。</li>
+  </ol>
+  <p data-page-node-id="diqpWrsTeIAc8U7R2GrZRr">过程中如果你发现某条记忆记错了（比如它以为你偏好的是另一种配色），<strong data-page-node-id="9uD4836RE1EiQIFXj88mm4">不需要去翻文件</strong>——直接进「设置 → 记忆」点编辑，用对话告诉它"我不用那种配色，我要黑白灰加单一强调色"即可；想彻底重来就点删除清空。<span class="cite" data-page-node-id="6ImQsEi4UAUkUSEZ2CLhKT">[来源 1]</span></p>
+  <p data-page-node-id="yflBB8SmoIYVemQEBBSPQq">这里有个细节值得注意：如果你在对话里直接问它"上周我们做过什么"，它支持对会话历史做检索。<span class="cite" data-page-node-id="B5EdCXsJJpsEHAg4xH38UT">[来源 1]</span> 这把"记忆"和"历史检索"连起来了——不仅能记住结论，还能按需翻回过程。</p>
+</section>
+
+<!-- 6 -->
+<section id="boundaries" data-page-node-id="cfP39DG6eBzdzNSucv9ilm">
+  <h2 data-page-node-id="EfEyJSVw7Nqw2WnrDnSTd7"><span class="num" data-page-node-id="RMj9gqAbBHZfFgc6iHgnbH">06</span>易混淆 / 使用边界</h2>
+
+  <h3 data-page-node-id="tBFuyar3MawHD4ze2G0NBa">最容易搞混的三组概念</h3>
+  <div class="tblwrap" data-page-node-id="deZDRAHdILoihYbcmnbOo5">
+  <table data-page-node-id="VTAw6jWBHuHvJ7jiNlmaaB">
+    <thead data-page-node-id="5EE34nj3hVZoeENsLy0qhk"><tr data-page-node-id="JFwjlZ11MJAaEXDk0eb57Q"><th data-page-node-id="mvXq67FGggPJworXmPylD1">容易混</th><th data-page-node-id="hKzRX1SI9MaqCh02QCfNGA">关键区别</th></tr></thead>
+    <tbody data-page-node-id="IAZqm8pCGIKwQA9zb0KraG">
+      <tr data-page-node-id="NFXT8ee6BCEh5WZPSiwCmV">
+        <td data-page-node-id="Mw3CHYe8FXyMhVDdsdFkTR">记忆 vs 聊天记录</td>
+        <td data-page-node-id="gCHza2dHiHQMp4ySOlcEHX">聊天记录是<strong data-page-node-id="fZ6jBgxsZFT1bxDxQSvTlj">原始流水</strong>（说过什么就存什么）；记忆是<strong data-page-node-id="ksBw41JBAV4CV5ivIDzQQm">模型抽取后的结论</strong>（事实、偏好、关系、跟进事项）。官方明确说是"提取具有参考价值的个人信息"，不是全量存档。<span class="cite" data-page-node-id="nxNx9JB59x8VEFO2VeQEVf">[来源 1]</span></td>
+      </tr>
+      <tr data-page-node-id="p5JGAzMWftIPoJFAWP2LIw">
+        <td data-page-node-id="YoOVdxGs8Ew0YP3CC5yf1d">记忆功能 vs 本地记忆文件</td>
+        <td data-page-node-id="kxoSzbDVpVnaR7UkcZlFjY">前者是<strong data-page-node-id="7eO1QoEHRqCuo77c4PQWCb">产品功能</strong>，在「设置 → 记忆」里查看编辑，用对话操作；后者是<strong data-page-node-id="C4JwuDDxbxp1j2LPHNjzbP">磁盘文件</strong>（如 <code data-page-node-id="VIADRQOGqp9DXHH0CzqLfC">~/.workbuddy/MEMORY.md</code>），用编辑器直接改。两者形态、入口、操作方式都不同。<em data-page-node-id="Pr0QDqwftwVUmiFy9xZujU">它们的同步关系官方未说明，不要自行推断。</em></td>
+      </tr>
+      <tr data-page-node-id="qkHDSLtzADF6tx2H6BeAYY">
+        <td data-page-node-id="bQFJoKm7SEVlrdSJaG4O0K">个人记忆 vs 项目级记忆文件</td>
+        <td data-page-node-id="iq9Lhz1bZ6SPedPooaGPqG">个人记忆是<strong data-page-node-id="JEhAD2w8BpLlGPYkzHY13L">你本人维度</strong>的、仅你可见；<code data-page-node-id="gjwBTxDLbHp1wyHBE8q3zp">.codebuddy/CODEBUDDY.md</code> 是<strong data-page-node-id="mCysiMo3OlXkzU6p2zzHqk">项目维度</strong>的团队知识，可提交到版本控制、随项目共享给所有成员。前者跟着人走，后者跟着代码库走。<span class="cite" data-page-node-id="WPBfCXOx3kkf69hTQHUvX8">[来源 2]</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 data-page-node-id="xB5lo04rbo62qoUlTN2Bfo">使用边界与注意事项</h3>
+  <ul data-page-node-id="LQXRKIEhCSCQpQ78wfHogG">
+    <li data-page-node-id="5yUVapp9oXiLSXVJCzfpmB"><strong data-page-node-id="EytEk6ItVWpEYwDEp2TZmg">依赖前先核验。</strong>官方明确提示：记忆由模型基于会话内容自动抽取，<strong data-page-node-id="PgHborLQnk8Xl6ZpBbOysQ">可能存在概括偏差或时效性问题</strong>，在依赖记忆做重要判断前建议先核验。<span class="cite" data-page-node-id="dUKb3ugBXPGNuPEEqIm0bG">[来源 1]</span></li>
+    <li data-page-node-id="XVqqFFktmDDklAxTHtID16"><strong data-page-node-id="mscETN5h2xYWdEGBg4A012">关闭不等于撤回。</strong>关闭功能或删除记忆条目后，相应数据将停止用于后续对话，<strong data-page-node-id="VHHBnhjGlA4FiiOyjLK8za">但已生成的输出不会因此追溯撤回</strong>。<span class="cite" data-page-node-id="JF9R434hADGknHXOnTizcC">[来源 1]</span></li>
+    <li data-page-node-id="APaCKk9oSCqcASbKyp9QV3"><strong data-page-node-id="MXEt489mHIzmCTAaCVJADS">关闭后停止提取。</strong>一键关闭后将停止提取新的记忆；想恢复个性化就再打开。</li>
+    <li data-page-node-id="bUTtC6Hx5F0u909zP9wnHp"><strong data-page-node-id="QYRiWkhgocA4M0nyJk4VIQ">涉及他人信息要获授权。</strong>官方提示：会话中如涉及他人个人信息，<strong data-page-node-id="ezSsjTFnIwLE2UT2gYnIQ0">请在提交前确认已获得相关授权</strong>。<span class="cite" data-page-node-id="AXLrxSzHIEl6ld2dL0iL23">[来源 1]</span></li>
+    <li data-page-node-id="1OJGFY5YVkwSfJoG8GwnFm"><strong data-page-node-id="8H1QPhqoGCV2XAWCvvtrHs">它不是知识库。</strong>记忆管的是"关于你这个人的信息"，与资料库（乐享知识库、腾讯文档等外部知识的检索）是两套东西，不要互相替代。</li>
+  </ul>
+
+  <h3 data-page-node-id="Y2eCfh4y3gDPUubaLAutk0">常见的失败模式</h3>
+  <ul data-page-node-id="BLVaECOxwE0oNLJWGN9uUD">
+    <li data-page-node-id="TApxGHTgUfVvBYbHKVv2Ao"><strong data-page-node-id="eg9SEzA4Jyk0dBGkOS6jbg">把文件当功能：</strong>看到 <code data-page-node-id="PygDpvE2jRf9ldFnbViOKa">.workbuddy/memory/</code> 下有文件，就断言"这就是官方记忆的存储"——把两条线混成一件事，结论会站不住。</li>
+    <li data-page-node-id="BUyCjWpwA7V8DpRpgCGiN0"><strong data-page-node-id="rt0U5GpBwHpaFT89uaipZ9">以为实时生效：</strong>白天说的事指望立刻被记住，但官方是按<strong data-page-node-id="pIQpvkamTyg9iPMABJ4TEh">每晚整理</strong>，当天不一定马上生效。</li>
+    <li data-page-node-id="atMLlDCFJep2jGb3C922pV"><strong data-page-node-id="xDO1B9NAQEqcWcyyLcjc7a">把过期信息当事实：</strong>记忆带有时效性风险，长期不清理可能让旧偏好持续影响新任务。</li>
+    <li data-page-node-id="vgqyBCWlR1gXXr1d1BSddC"><strong data-page-node-id="TS7fx27FzsvWHPmXv53ltC">指望删除能追溯：</strong>删掉记忆不等于已经产出的内容会消失，涉及敏感内容需要另行处理。</li>
+  </ul>
+</section>
+
+<!-- 7 -->
+<section id="selftest" data-page-node-id="K8y8HydEEZYXkrhMYb5nMY">
+  <h2 data-page-node-id="vHQbbkLkK3AG26MfHES4Lb"><span class="num" data-page-node-id="gNuOMAeR5buuUeM97qOwTr">07</span>自测问题</h2>
+
+  <div class="q" data-page-node-id="z7YPrYvJ4MGWv5rn1f5kua">
+    <div class="qh" data-page-node-id="86A1r65lrgsFr7RNq3ZCLf">简答题 ① · 概念辨析</div>
+    <div class="qt" data-page-node-id="E068D2iK2dTHLUgP2SGyoA">WorkBuddy 的「记忆」和「聊天记录」最本质的区别是什么？官方说记忆会抽取哪几类信息？</div>
+    <details data-page-node-id="hYTV4x419fsGCCpPVSFIfr"><summary data-page-node-id="AoFEefOCFOo28bhgsJMcqg">查看答题要点</summary>
+      <div class="ans" data-page-node-id="JEoCacIIRBGr3AWpOJy1aw">
+        <p data-page-node-id="5v1THwRA57a7c9l1qCktbw"><b data-page-node-id="4NcQTeIElG4dqzgY1jFX9z">要点：</b>区别在于<strong data-page-node-id="jkEdKJiHuIJTwA5GfZn10e">是否经过模型抽取</strong>。</p>
+        <ul data-page-node-id="SQ5xcMgAmFGD7Zc3N2X0bd">
+          <li data-page-node-id="3LlnK8EQgJcmbquvQEGsQW">聊天记录是<strong data-page-node-id="5UaN1bcFA5GGKp949GkiR0">原始流水</strong>，说过什么就存什么；记忆是模型从会话历史中<strong data-page-node-id="qEaiuJPGq7jasZzDJYSDbI">提取"具有参考价值的个人信息"</strong>后形成的结论。<span class="cite" data-page-node-id="1eUl4EWHPwKQdd3kJTPwya">[来源 1]</span></li>
+          <li data-page-node-id="HrPBwCEupEjc0eNaNoFbV1">官方列举的四类抽取对象：<strong data-page-node-id="0smqcUaKcryHA7nxwHCpF5">事实信息、偏好习惯、人物关系、近期跟进事项</strong>。</li>
+          <li data-page-node-id="bV4g6HB8kSzR57jqEcZs0M">补充加分点：记忆的产出叫「记忆数据」，会<strong data-page-node-id="4d75hy0ZhQjTdNo8oj3cyu">定期更新</strong>（每晚整理当天会话），而不是逐句追加。</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="q" data-page-node-id="FAU2SxnqJ0WsIHzIJrZaBq">
+    <div class="qh" data-page-node-id="1so6jJkDz2yiHBngDeww17">简答题 ② · 核心机制</div>
+    <div class="qt" data-page-node-id="x1hRy3YRXbyj4BaTaPMXWe">记忆的提取频率是怎样的？它是否消耗你的积分？可见范围有多大？</div>
+    <details data-page-node-id="7GEe9bzKB27PFxyncaROey"><summary data-page-node-id="BgmHGByv9ciR7gWJ3g34uH">查看答题要点</summary>
+      <div class="ans" data-page-node-id="dNk9k2I2KIEsOZRrJ5Xipb">
+        <ul data-page-node-id="nR6CVp82UhCW1mXK7oVvEb">
+          <li data-page-node-id="EgmjwUHqkyRGZ2t8rp5dDr"><strong data-page-node-id="ONoB3swSbFRhkIZ7fnDwUB">提取频率：</strong>每晚整理当天会话——属于<strong data-page-node-id="cK0zFwU4I9cgHQZfUDN4uK">批处理</strong>，不是实时写入。<span class="cite" data-page-node-id="10Vt9Enh6aDuArmgTnWXeo">[来源 1]</span></li>
+          <li data-page-node-id="RCpMmzkDoBENwf7I3eua1o"><strong data-page-node-id="oPLQDZXJN82x9S6wVW2AEh">积分消耗：</strong>不涉及。记忆提取由 WorkBuddy 自费完成，不向你额外消耗 token / 积分。</li>
+          <li data-page-node-id="Gur04JBe4cnBFpP8QFyFAl"><strong data-page-node-id="Kya3B7qR7WpuYQDrqCX3b2">可见范围：</strong>仅你本人可见；记忆数据仅用于产品内部为你本人提供个性化服务，<strong data-page-node-id="dAIwbsT6dMwoc7RSCQav3w">不涉及第三方共享</strong>。</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="q" data-page-node-id="ysq0fCFCpKBTDyOvGyIpTw">
+    <div class="qh" data-page-node-id="pMGz8o3sLW73oqsMLNbmKa">选择题 ③</div>
+    <div class="qt" data-page-node-id="IARbRiSedWtHlZWiC5yVHD">关于 WorkBuddy 记忆的管理方式，下列表述<strong data-page-node-id="vTli73IkEp0OidmX4Gye3d">正确</strong>的是？</div>
+    <ol type="A" data-page-node-id="iVehSjA3sEaUnaCKvpr7Qo">
+      <li data-page-node-id="EEMuZFvBE3pdgJsElm3Jwm">必须手动编辑磁盘上的记忆文件才能修改记忆</li>
+      <li data-page-node-id="hBHFkT3kmRodyG1K5PFIbA">在「设置 → 记忆」中可查看、编辑、删除或一键关闭</li>
+      <li data-page-node-id="7tILPscLvqZBbq1gpeZ7Hh">记忆不支持删除，只能等待自动过期</li>
+      <li data-page-node-id="4l5H4ZPj5cxS8PHVc6Y1vO">记忆一旦生成就无法关闭提取功能</li>
+    </ol>
+    <details data-page-node-id="KkmkigKDXIqmOMV082UWBP"><summary data-page-node-id="GLTzpvJBC3TtyUEfx733qb">查看答案与理由</summary>
+      <div class="ans" data-page-node-id="hM1aFFJ0Kdn1SYnEwGCL6o">
+        <p data-page-node-id="zdp2XuEFTFhoYvFS2X5wkW"><b data-page-node-id="xvHbB1XkhCfF324bwSsGqQ">正确答案：B。</b><span class="cite" data-page-node-id="fsnSDehYl5bsQRme52mH4m">[来源 1]</span></p>
+        <ul data-page-node-id="mG3oTXccRQV2PUm4fY4yZ0">
+          <li data-page-node-id="BnQyKQAMK2LtnOZuON4NnN">A 错：官方把"编辑记忆"设计成<strong data-page-node-id="JbdjuLfwAlBoxRMLkst0IC">对话式</strong>——点右上角编辑图标，用对话告诉它要记住或忘记什么，无需改文件。</li>
+          <li data-page-node-id="UPPxEG5DGhvm2lmeOmS8Lm">B 对：入口即头像 → 设置 → 记忆，支持查看、编辑、删除、一键关闭，还支持从其他 AI 导入。</li>
+          <li data-page-node-id="48LQGD4z4WVFniMx90K1Vb">C 错：可以点删除图标<strong data-page-node-id="mXeV9l5HSG26eUY0c4y0IZ">清空当前记忆</strong>。</li>
+          <li data-page-node-id="49Sfl9nBERsNtDGntuSBH4">D 错：可随时一键关闭，关闭后停止提取新记忆。</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="q" data-page-node-id="cKbliuQ9tLeI1azHkFwNDX">
+    <div class="qh" data-page-node-id="OiV3bfBcV61L0PGQo7CDFM">选择题 ④</div>
+    <div class="qt" data-page-node-id="GVRBp41eMsM6YF9mz9q6mu">下列关于「记忆」与「项目级记忆文件 <code data-page-node-id="zzY2uHJ5dkUERqgyyUxcl1">.codebuddy/CODEBUDDY.md</code>」的比较，<strong data-page-node-id="wgRJeYCdCgT3UgUW3NP11c">正确</strong>的是？</div>
+    <ol type="A" data-page-node-id="n5lxtgWMATV2H6coAjyJcl">
+      <li data-page-node-id="vGAOY29BEFFddOdwjxL6qo">两者是同一样东西的两种叫法</li>
+      <li data-page-node-id="gfLwk3PPcdUPpZlj6vfMrz">个人记忆可提交到版本控制供团队共享</li>
+      <li data-page-node-id="vfY0Fo7A0qsJ1TkEZXCCXy">CODEBUDDY.md 存的是项目架构、约定、常用命令等团队知识，可提交版本控制</li>
+      <li data-page-node-id="tCdvHPZPng80hQI5Rqqisl">CODEBUDDY.md 仅创建者本人可见</li>
+    </ol>
+    <details data-page-node-id="x5Is1onjebXzZLXi6vf0YT"><summary data-page-node-id="UFgWDvK8R11wS28xlwXl60">查看答案与理由</summary>
+      <div class="ans" data-page-node-id="3pbp0GL9S7LuH5UubaJXsq">
+        <p data-page-node-id="wj5zC7ZKrdlotk5qbGlm82"><b data-page-node-id="0hXo2dtMJuAF3CrWF3S8v7">正确答案：C。</b><span class="cite" data-page-node-id="5YIZuKwSKH6ivnmLN3YyWH">[来源 2]</span></p>
+        <ul data-page-node-id="NKGIK2yOYHM84lGGehc2Yf">
+          <li data-page-node-id="3H4BSTWb1HD96eBfXkBZlm">A 错：个人记忆是<strong data-page-node-id="Jn0pX63Ohnt9gHJlSs5WCe">你本人维度</strong>的（仅你可见）；CODEBUDDY.md 是<strong data-page-node-id="mOqHWjgD9q70dZY6QZ9VZM">项目维度</strong>的团队知识，两者不同层面。</li>
+          <li data-page-node-id="zIC4IBcrIStfrivbTtdSV3">B 错：个人记忆仅你本人可见、不涉及第三方共享，谈不上提交版本控制。</li>
+          <li data-page-node-id="SInxQkDd7Naksx5FA1jJhv">C 对：官方明确 CODEBUDDY.md 为"项目级记忆文件：存储项目架构、约定、常用命令等团队知识"，且项目级配置<strong data-page-node-id="5OIR36AS5LhaJDGAsqvLAw">可提交到版本控制</strong>随项目共享。</li>
+          <li data-page-node-id="WwZyKIMrgKFlGIhqWusyAc">D 错：它是团队共享的项目配置，不是个人私有。</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="q" data-page-node-id="FnjpwZ1WN1HCrBwmWD95XT">
+    <div class="qh" data-page-node-id="EX07bQOeFnCtlyYAwhGSkH">应用题 ⑤ · 应用场景</div>
+    <div class="qt" data-page-node-id="LDC6Anq8ZA4dVqbcfkSuii">你想让 WorkBuddy 长期记住「我的课件配色偏好是黑白灰加单一强调色」。请描述你会怎么做，以及在什么情况下需要检查这条记忆是否还准确。</div>
+    <details data-page-node-id="pFF8PCzh98z3yLrDTVkclI"><summary data-page-node-id="MqZ7KyeU4VYmuutyW6bQg6">查看答题要点</summary>
+      <div class="ans" data-page-node-id="Ln7WtslXgnDduqRudOalIG">
+        <p data-page-node-id="ruiI5o1WH4YrSluDyWC0aR"><b data-page-node-id="RYBkVCDiPObE9pgOAAthLz">答题要点：</b></p>
+        <ul data-page-node-id="ggN2pf7xl4KmR3HuGN7SGK">
+          <li data-page-node-id="JrNx351TYJGnov7jBNGtf2"><b data-page-node-id="4QmsiVL4UlbU7fpwWe1D7u">怎么做：</b>直接在对话里表达偏好即可（例如"记住：我的课件配色是黑白灰加单一强调色"）；模型会在<strong data-page-node-id="AWFMSBdZthbT9uq5licYqE">每晚整理</strong>当天会话时抽取这类"偏好习惯"信息。后续如需修改，进「设置 → 记忆」点编辑，用对话说明即可，<strong data-page-node-id="hidzDXqb9sWizhDPXMEI7Z">不必手动改文件</strong>。<span class="cite" data-page-node-id="AqGHqkmDDcBsb5rJr1tIXT">[来源 1]</span></li>
+          <li data-page-node-id="w5tNR839Lvt9Fw7ANRA9py"><b data-page-node-id="yWsUGEX4OceV7fJqI0jBm5">何时检查：</b>① 用它做重要判断前——官方提示记忆可能存在概括偏差或时效性问题，依赖前建议核验；② 发现它给出的配色不符合预期时；③ 偏好已经改变后，及时更新或删除旧条目。</li>
+          <li data-page-node-id="pfX4B8rCbutadm4eELIe6D"><b data-page-node-id="6uXkBbzhiAbvhGFhVEcVSU">加分点：</b>指出"关闭/删除后已生成的输出不会追溯撤回"，所以改偏好后，之前已产出的旧文件仍需自行处理。</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="q" data-page-node-id="1DwJbGO7oFRqGEI5BN9JhI">
+    <div class="qh" data-page-node-id="h0RLyuYvrLslsBMmXc0PLa">应用题 ⑥ · 风险与边界</div>
+    <div class="qt" data-page-node-id="bODya49XSqMOfHVBbZVvjd">有人说"我看到 <code data-page-node-id="yHasbRevomozvvGcbKIt2v">.workbuddy/memory/</code> 目录下有文件，所以这就是 WorkBuddy 记忆功能的存储位置"。请评价这个推论，并说明应当如何正确表述。</div>
+    <details data-page-node-id="78Rld2NfifxHJUaZBTmm9b"><summary data-page-node-id="SmGG4ZpGtPsO0SYIcuKuQW">查看答题要点</summary>
+      <div class="ans" data-page-node-id="DjoMyWODfAXVunUGGvfGKQ">
+        <p data-page-node-id="6uY9binz5BzLgDIczM71cQ"><b data-page-node-id="OHWVcEZRqhM4cDWxxBzZfF">答题要点：</b></p>
+        <ul data-page-node-id="zdOiycYVlLj7NLiM6Dcx3f">
+          <li data-page-node-id="rn4lMZRazLuxttUUFyTRuw"><b data-page-node-id="rqBghQ0uaF8ZLFhOEFUBNF">推论的问题：</b>它把"眼见为实的文件"直接等同于"官方功能的设计"——这是一次<strong data-page-node-id="N6zDcw7MNrmo2stuhcYbdX">未经验证的因果推断</strong>。官方文档对「记忆」的定义是产品功能层面的（从会话历史抽取、每晚整理、在设置里管理），并未说明其存储实现；磁盘上的 <code data-page-node-id="tjEq52pq1U9ZpVpsNP1o7z">memory/</code> 目录同时容纳身份文件、工作日志等多种用途的文件，不能凭目录同名就断定等同。</li>
+          <li data-page-node-id="QAnNGNorYMbQs6LjaxKd0E"><b data-page-node-id="HCIePBBYVWbDFwi1ZNW9cz">正确表述：</b>分开陈述两层——① 官方口径：记忆是自动抽取的个人信息功能，入口在设置中；② 本机实测：该目录下确实存在某种以 uid 命名、带版本号的记忆档案与按日期命名的工作日志。<strong data-page-node-id="nK0BeJSOvcDHUCcLR4EAwa">对"二者的对应关系"，明确标注官方未说明、不作推断。</strong></li>
+          <li data-page-node-id="iOzm5LtTH8yBO9SYUfllCj"><b data-page-node-id="y6om9C73sFcQq90TFwHTeU">方法论加分点：</b>这正是本卡片坚持的原则——<strong data-page-node-id="zWeGQlrfxv1ON1i0QHdSxj">官方口径与本机形态分开说</strong>；涉及本机实物时以实测为准并注明，但不用实测结果去反推官方机制。</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="sources" data-page-node-id="bEH2JAZdJqSuyoMjGiVkJt">
+  <h2 data-page-node-id="zX7G26U9mzAGgDBWyH5Geo"><span class="num" data-page-node-id="rHmBRErOGAq9Oqz4nNOYKi">08</span>参考来源</h2>
+  <p class="note" data-page-node-id="jymjhF70ZMKa3ILKSNcVC0"><b data-page-node-id="UVwTB3JvIJz9NJ6FE6MYkV">来源纪律：</b>本卡片只采用 WorkBuddy <strong data-page-node-id="5DcAs4iS7ej7tjLNWGL3N3">官方文档</strong>作为来源（全部于 2026-09-10 实际抓取核对）。<strong data-page-node-id="VLJjkze6RF0jXoS7FUPnK8">未采用</strong>任何文库、百科、或第三方笔记聚合内容。</p>
+  <ol data-page-node-id="lZLHkxCyKAMUkRKHWp5MAt">
+    <li data-page-node-id="1031AqvDVeYWDaliYW5eP5">
+      <a href="https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Memory" target="_blank" rel="noopener" data-page-node-id="gMIYy4BJNtE5bZQe7UOVOM">记忆 | WorkBuddy 官方文档</a>
+      <span class="sdesc" data-page-node-id="6g4HUI3NJcIR06qANCYKyi">本卡片的<strong data-page-node-id="QrjIChJ6sAYBOBKVBFHjUx">核心来源</strong>。含官方定义（从会话历史提取事实信息、偏好习惯、人物关系、近期跟进事项形成记忆数据）、提取频率（每晚整理当天会话）、查看/编辑/删除/导入/关闭的操作方式、注入系统提示词与历史检索两种使用方式、积分与第三方共享说明、隐私提醒与使用建议。</span>
+    </li>
+    <li data-page-node-id="Oi7hLWvQHOOx3EEU9DJSAn">
+      <a href="https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Project" target="_blank" rel="noopener" data-page-node-id="e7cjnRV1iUd0FFXTrMB5LV">项目 | WorkBuddy 官方文档</a>
+      <span class="sdesc" data-page-node-id="nEWdfbiUyn0PysbsT1A3ET">「项目级记忆文件」的出处。含项目配置结构，以及项目级代码开发配置中 <code data-page-node-id="VWycAnXA7xEwAaXjitVPYc">.codebuddy/</code> 目录的作用说明：<code data-page-node-id="fZ6yjCbRqMIMA9GCY8avfS">codebuddy/rules/</code>（项目规则）、<code data-page-node-id="ttC0R04gpNoqpsWH5y6CGO">codebuddy/agents/</code>（项目专属 Agent）、<code data-page-node-id="i6sAvWrBzFuHxAOFg7T9qP">codebuddy/skills/</code>（项目级技能）、<code data-page-node-id="tQeLfre7UhS91ULLzGp1U7">codebuddy/commands/</code>（自定义斜杠命令）、<code data-page-node-id="BcetSGPSMMRIYHqDc0bfUb">codebuddy/CODEBUDDY.md</code>（<strong data-page-node-id="pKlHKi84ixaWTeryBV13nB">项目级记忆文件</strong>）。</span>
+    </li>
+    <li data-page-node-id="uuGFmtaQUp9YrHErJHy08G">
+      <a href="https://www.workbuddy.cn/docs/workbuddy/Quickstart" target="_blank" rel="noopener" data-page-node-id="ByKs7hGnvhGZSWvMDKYj6Y">快速开始 | WorkBuddy 官方文档</a>
+      <span class="sdesc" data-page-node-id="vGgjeVV3aaCrxAO1IuTXwl">官方文档站导航入口。用于从「从入门到精通指南 → 功能说明」定位各功能页面（记忆、项目、知识库等）。</span>
+    </li>
+    <li data-page-node-id="g9zsknn2Wfbq4PU3orGceC">
+      <a href="https://privacy.qq.com/document/preview/771d9a58551449e9a7e7445ebfe04966" target="_blank" rel="noopener" data-page-node-id="xAmmTSN0buaylOuzSIbGf6">WorkBuddy 隐私政策（腾讯）</a>
+      <span class="sdesc" data-page-node-id="XxkItERS7s5PowoTuK7XNU">官方文档「隐私提醒」一节直接引用的协议原文，记忆内容的处理以该政策为准。</span>
+    </li>
+  </ol>
+  <p class="note warn" style="margin-top:22px" data-page-node-id="EsnQnK2QSzZk0DsIF3oCax"><b data-page-node-id="59Dbm1TDoBTHAOQPmFNQ4i">版本与时效提示：</b>以上来源均为 2026-09-10 实际抓取。产品功能与限制可能随版本更新而变化，建议引用前回官方文档核对最新表述。本卡片对<strong data-page-node-id="QHDX8nTreBXNMfJr2o0HlY">官方未明确说明的事项</strong>（如「记忆功能」与本地 <code data-page-node-id="mE44rUNfPI7i8dxiIT30Zj">.workbuddy/memory/</code> 文件的对应关系）不作推断。</p>
+</section>
+
+<footer data-page-node-id="MR8eMXCiesuQ8z4SoBpm3J">
+  概念学习卡片 · WorkBuddy 记忆系统 · 生成于 2026-09-10 · 由 concept-learning-generator 生成<br data-page-node-id="fpEonHz9aIVruYW4nbEEGz">
+  本文件为独立 HTML，内联全部样式，无外部依赖，可离线双击打开。
+</footer>
+
+</div>
+</body>
+</html>

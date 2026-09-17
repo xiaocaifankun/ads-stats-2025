@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent 智能体 · 溯源式学习手册</title>
+<style>
+  :root{
+    --bg:#FAF9F7; --card:#FFFFFF; --border:#E8E3DC;
+    --ink:#292524; --ink2:#78716C; --ink3:#A8A29E;
+    --accent:#C4633F; --accent-soft:#F7EBE4;
+    --ok:#3D7A50; --bad:#B4433A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;font-size:16px}
+  .wrap{max-width:800px;margin:0 auto;padding:0 26px}
+  .svgtext{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+
+  /* ---------- header ---------- */
+  header.page-head{padding:76px 0 48px;border-bottom:1px solid var(--border)}
+  .eyebrow{font-size:12px;letter-spacing:.4em;color:var(--accent);margin-bottom:20px}
+  h1{font-family:Georgia,"Songti SC",serif;font-size:54px;font-weight:400;line-height:1.1}
+  h1 .cn{font-size:22px;color:var(--ink2);margin-left:16px;letter-spacing:.08em}
+  .def{margin-top:22px;font-size:17px;max-width:660px}
+  .chips{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip{font-size:12.5px;color:var(--ink2);border:1px solid var(--border);border-radius:999px;padding:5px 14px;background:var(--card)}
+
+  /* ---------- sections ---------- */
+  section{padding:58px 0;border-bottom:1px solid var(--border)}
+  .sec-no{font-family:Georgia,serif;color:var(--accent);font-size:13px;letter-spacing:.25em}
+  h2{font-family:Georgia,"Songti SC",serif;font-size:28px;font-weight:600;margin-top:8px}
+  .lead{margin-top:20px;font-size:16.5px;max-width:680px}
+  .lead strong{color:var(--ink);font-weight:700}
+  figure{margin-top:32px}
+  .figbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 16px}
+  .figbox svg{width:100%;height:auto;display:block}
+  figcaption{margin-top:14px;text-align:center;font-size:13px;color:var(--ink3)}
+
+  /* ---------- rules ---------- */
+  ol.rules{margin-top:34px;list-style:none;counter-reset:rule;display:flex;flex-direction:column;gap:30px}
+  ol.rules li{counter-increment:rule;padding-left:58px;position:relative}
+  ol.rules li::before{content:counter(rule,decimal-leading-zero);position:absolute;left:0;top:3px;font-family:Georgia,serif;color:var(--accent);font-size:15px;letter-spacing:.06em;border-bottom:2px solid var(--accent);padding-bottom:2px}
+  ol.rules strong{display:block;font-size:16px}
+  .r-exp{display:block;margin-top:4px;font-size:14.5px;color:var(--ink2)}
+  .r-src{font-style:normal;font-size:12.5px;color:var(--ink3);margin-left:10px}
+
+  /* ---------- sources ---------- */
+  .src-grid{margin-top:34px;display:flex;flex-direction:column;gap:14px}
+  .src-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 24px;display:grid;grid-template-columns:46px 1fr;gap:16px}
+  .src-no{font-family:Georgia,serif;color:var(--accent);font-size:15px;padding-top:3px}
+  .src-card h3{font-size:15.5px;font-weight:600;line-height:1.5}
+  .src-card p{margin-top:6px;font-size:13.5px;color:var(--ink2);line-height:1.7}
+  .src-card a{display:inline-block;margin-top:10px;font-size:12.5px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,99,63,.35);word-break:break-all}
+  .src-card a:hover{border-bottom-color:var(--accent)}
+
+  /* ---------- quiz（作用域收窄，避免命中页面其他元素） ---------- */
+  .quiz-intro{margin-top:14px;font-size:13.5px;color:var(--ink3)}
+  .q{margin-top:36px}
+  .q-meta{display:flex;align-items:center;gap:12px}
+  .q-lv{font-size:11.5px;letter-spacing:.12em;color:var(--accent);border:1px solid rgba(196,99,63,.4);border-radius:999px;padding:2px 12px}
+  .q-no{font-size:12px;color:var(--ink3)}
+  .q-text{margin-top:12px;font-weight:600;font-size:16px}
+  .q-opts{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+  .q-opts .q-opt{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 15px;font-size:14.5px;font-family:inherit;color:var(--ink);cursor:pointer;display:flex;gap:12px;line-height:1.65;transition:border-color .15s}
+  .q-opts .q-opt:hover{border-color:#D8CFC5}
+  .q-opts .q-opt .letter{color:var(--ink3);font-family:Georgia,serif;flex:none}
+  .q-opts .q-opt.ok{border-color:var(--ok);background:rgba(61,122,80,.06)}
+  .q-opts .q-opt.ok .letter{color:var(--ok)}
+  .q-opts .q-opt.bad{border-color:var(--bad);background:rgba(180,67,58,.05)}
+  .q-opts .q-opt.bad .letter{color:var(--bad)}
+  .q-opts.locked .q-opt{cursor:default}
+  .q-opts.locked .q-opt:hover{border-color:var(--border)}
+  .q-opts.locked .q-opt.ok:hover{border-color:var(--ok)}
+  .q-opts.locked .q-opt.bad:hover{border-color:var(--bad)}
+  .q-why{margin-top:14px;font-size:13.5px;color:var(--ink2);border-left:3px solid var(--accent);padding:3px 0 3px 14px;line-height:1.8}
+  .q-why a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,99,63,.35)}
+  #quiz-result{margin-top:44px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:30px 32px}
+  #quiz-result .score{font-family:Georgia,serif;font-size:42px;line-height:1.2}
+  #quiz-result .score em{font-style:normal;font-size:17px;color:var(--ink3);margin-left:6px}
+  #quiz-result .lvls{margin-top:10px;font-size:13.5px;color:var(--ink2)}
+  #quiz-result .verdict{margin-top:14px;font-size:15px}
+  #quiz-reset{display:inline-block;margin-top:20px;font-size:13px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,99,63,.35);cursor:pointer;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+
+  footer{padding:44px 0 64px;font-size:12.5px;color:var(--ink3);text-align:center}
+  @media (max-width:640px){
+    h1{font-size:40px}
+    ol.rules li{padding-left:46px}
+    .src-card{grid-template-columns:34px 1fr;gap:10px}
+  }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">溯源式概念学习手册</p>
+    <h1>Agent<span class="cn">智能体</span></h1>
+    <p class="def">任何能通过传感器感知环境、并通过执行器作用于环境的实体——而 AI 的任务，就是设计这样的<strong>理性智能体</strong>；在 LLM 时代，它指<strong>动态决定自身流程与工具使用</strong>的系统。</p>
+    <div class="chips">
+      <span class="chip">1993 · AOP 论文为 Agent 赋予心智状态</span>
+      <span class="chip">AIMA：AI 即理性智能体的研究与设计</span>
+      <span class="chip">Anthropic：Agent 通常只是循环中使用工具的 LLM</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- 01 -->
+<section id="sec-01">
+  <div class="wrap">
+    <p class="sec-no">01</p>
+    <h2>它是什么</h2>
+    <p class="lead"><strong>Agent 的本质是一个闭环：感知环境、自主决策、采取行动。</strong>LLM 时代的 Agent，则是「增强型 LLM」在循环中使用工具的系统。</p>
+    <figure>
+      <div class="figbox">
+        <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="经典智能体回路与现代 LLM Agent 组成对照图">
+          <defs>
+            <marker id="s1a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E"/>
+            </marker>
+            <marker id="s1b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#C4633F"/>
+            </marker>
+          </defs>
+          <!-- 左：经典定义 -->
+          <text x="160" y="30" text-anchor="middle" class="svgtext" font-size="13" fill="#78716C">经典定义 · AIMA</text>
+          <rect x="60" y="52" width="200" height="54" rx="8" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="160" y="76" text-anchor="middle" class="svgtext" font-size="14" font-weight="600" fill="#292524">环境 Environment</text>
+          <text x="160" y="95" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">任务 · 世界 · 其他智能体</text>
+          <rect x="60" y="190" width="200" height="54" rx="8" fill="#FFFFFF" stroke="#C4633F"/>
+          <text x="160" y="214" text-anchor="middle" class="svgtext" font-size="14" font-weight="600" fill="#292524">智能体 Agent</text>
+          <text x="160" y="233" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">感知 → 决策 → 行动</text>
+          <line x1="108" y1="110" x2="108" y2="186" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s1a)"/>
+          <text transform="rotate(-90 94 148)" x="94" y="148" text-anchor="middle" class="svgtext" font-size="11" fill="#78716C">传感器 · 感知</text>
+          <line x1="212" y1="190" x2="212" y2="114" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s1a)"/>
+          <text transform="rotate(90 226 148)" x="226" y="148" text-anchor="middle" class="svgtext" font-size="11" fill="#78716C">执行器 · 行动</text>
+          <text x="160" y="278" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">恒温器与人类同样符合此定义</text>
+          <!-- 分隔线 -->
+          <line x1="340" y1="42" x2="340" y2="262" stroke="#E8E3DC"/>
+          <!-- 右：现代形态 -->
+          <text x="520" y="30" text-anchor="middle" class="svgtext" font-size="13" fill="#78716C">现代形态 · Anthropic</text>
+          <rect x="478" y="52" width="84" height="40" rx="8" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="520" y="77" text-anchor="middle" class="svgtext" font-size="13" font-weight="600" fill="#292524">记忆</text>
+          <rect x="362" y="136" width="84" height="40" rx="8" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="404" y="161" text-anchor="middle" class="svgtext" font-size="13" font-weight="600" fill="#292524">检索</text>
+          <rect x="594" y="136" width="84" height="40" rx="8" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="636" y="161" text-anchor="middle" class="svgtext" font-size="13" font-weight="600" fill="#292524">工具</text>
+          <rect x="458" y="130" width="124" height="52" rx="8" fill="#F7EBE4" stroke="#C4633F"/>
+          <text x="520" y="152" text-anchor="middle" class="svgtext" font-size="14" font-weight="600" fill="#292524">LLM</text>
+          <text x="520" y="170" text-anchor="middle" class="svgtext" font-size="11" fill="#78716C">核心推理</text>
+          <line x1="520" y1="92" x2="520" y2="126" stroke="#A8A29E" stroke-width="1.4"/>
+          <line x1="446" y1="158" x2="454" y2="157" stroke="#A8A29E" stroke-width="1.4"/>
+          <line x1="594" y1="158" x2="586" y2="157" stroke="#A8A29E" stroke-width="1.4"/>
+          <path d="M 468 196 C 480 242, 560 242, 574 200" fill="none" stroke="#C4633F" stroke-width="1.4" marker-end="url(#s1b)"/>
+          <text x="520" y="266" text-anchor="middle" class="svgtext" font-size="11" fill="#78716C">在循环中运行 · 直至停止条件</text>
+        </svg>
+      </div>
+      <figcaption>左：AIMA 的经典抽象——感知与行动的闭环；右：现代最小组成——检索、工具、记忆构成「增强型 LLM」。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="sec-02">
+  <div class="wrap">
+    <p class="sec-no">02</p>
+    <h2>核心设计</h2>
+    <p class="lead"><strong>判断一个系统是不是 Agent，只看一件事：下一步做什么，由代码写死，还是模型动态决定。</strong>这是 Workflow 与 Agent 之间唯一的架构分界线。</p>
+    <figure>
+      <div class="figbox">
+        <svg viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="智能体系统三层结构图">
+          <defs>
+            <marker id="s2a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E"/>
+            </marker>
+          </defs>
+          <line x1="104" y1="298" x2="104" y2="48" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s2a)"/>
+          <text transform="rotate(-90 84 172)" x="84" y="172" text-anchor="middle" class="svgtext" font-size="11" fill="#78716C">自主性 · 复杂度 递增</text>
+          <!-- Agent 层 -->
+          <rect x="150" y="20" width="410" height="72" rx="10" fill="#F7EBE4" stroke="#C4633F"/>
+          <text x="355" y="50" text-anchor="middle" class="svgtext" font-size="15" font-weight="600" fill="#292524">Agent 智能体</text>
+          <text x="355" y="73" text-anchor="middle" class="svgtext" font-size="11.5" fill="#78716C">控制流由模型动态决定 · 循环直至停止条件</text>
+          <!-- 分界线 -->
+          <line x1="150" y1="109" x2="560" y2="109" stroke="#C4633F" stroke-width="1" stroke-dasharray="5 5" opacity=".55"/>
+          <text x="560" y="103" text-anchor="end" class="svgtext" font-size="11" fill="#C4633F">分界线：下一步由代码还是模型决定</text>
+          <!-- Workflow 层 -->
+          <rect x="150" y="124" width="410" height="72" rx="10" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="355" y="154" text-anchor="middle" class="svgtext" font-size="15" font-weight="600" fill="#292524">Workflow 工作流</text>
+          <text x="355" y="177" text-anchor="middle" class="svgtext" font-size="11.5" fill="#78716C">控制流写死在代码路径：提示链 · 路由 · 并行 · 编排 · 评估</text>
+          <text x="355" y="219" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">以上两层均构建于其上</text>
+          <!-- 增强型 LLM 层 -->
+          <rect x="150" y="232" width="410" height="72" rx="10" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="355" y="262" text-anchor="middle" class="svgtext" font-size="15" font-weight="600" fill="#292524">增强型 LLM</text>
+          <text x="355" y="285" text-anchor="middle" class="svgtext" font-size="11.5" fill="#78716C">检索 · 工具 · 记忆 —— 所有智能体系统的基本构件</text>
+        </svg>
+      </div>
+      <figcaption>自下而上：增强型 LLM 是构件，Workflow 是写死的编排，Agent 是模型自主的循环。虚线即 Workflow 与 Agent 的分界线。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="sec-03">
+  <div class="wrap">
+    <p class="sec-no">03</p>
+    <h2>运行全程</h2>
+    <p class="lead"><strong>Agent 的一生就是「思考 → 行动 → 观察」的循环</strong>，每一步都以环境反馈作为 ground truth，直到满足停止条件。</p>
+    <figure>
+      <div class="figbox">
+        <svg viewBox="0 0 680 252" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent 循环时序图">
+          <defs>
+            <marker id="s3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8A29E"/>
+            </marker>
+            <marker id="s3b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#C4633F"/>
+            </marker>
+          </defs>
+          <!-- 循环箭头 -->
+          <path d="M 600 66 L 600 34 L 260 34 L 260 62" fill="none" stroke="#C4633F" stroke-width="1.4" marker-end="url(#s3b)"/>
+          <text x="430" y="26" text-anchor="middle" class="svgtext" font-size="11.5" fill="#C4633F">未达标 · 继续循环</text>
+          <!-- 四步 -->
+          <rect x="20" y="68" width="140" height="92" rx="10" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="36" y="94" class="svgtext" font-size="11" fill="#C4633F" letter-spacing="2">01</text>
+          <text x="90" y="126" text-anchor="middle" class="svgtext" font-size="14.5" font-weight="600" fill="#292524">接收任务</text>
+          <text x="90" y="147" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">目标与约束进入</text>
+
+          <rect x="190" y="68" width="140" height="92" rx="10" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="206" y="94" class="svgtext" font-size="11" fill="#C4633F" letter-spacing="2">02</text>
+          <text x="260" y="126" text-anchor="middle" class="svgtext" font-size="14.5" font-weight="600" fill="#292524">思考 Thought</text>
+          <text x="260" y="147" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">推理 · 拆解 · 计划</text>
+
+          <rect x="360" y="68" width="140" height="92" rx="10" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="376" y="94" class="svgtext" font-size="11" fill="#C4633F" letter-spacing="2">03</text>
+          <text x="430" y="126" text-anchor="middle" class="svgtext" font-size="14.5" font-weight="600" fill="#292524">行动 Action</text>
+          <text x="430" y="147" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">调用工具改变环境</text>
+
+          <rect x="530" y="68" width="140" height="92" rx="10" fill="#FFFFFF" stroke="#E8E3DC"/>
+          <text x="546" y="94" class="svgtext" font-size="11" fill="#C4633F" letter-spacing="2">04</text>
+          <text x="600" y="126" text-anchor="middle" class="svgtext" font-size="14.5" font-weight="600" fill="#292524">观察 Observation</text>
+          <text x="600" y="147" text-anchor="middle" class="svgtext" font-size="11" fill="#A8A29E">环境反馈 · ground truth</text>
+
+          <line x1="160" y1="114" x2="186" y2="114" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)"/>
+          <line x1="330" y1="114" x2="356" y2="114" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)"/>
+          <line x1="500" y1="114" x2="526" y2="114" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)"/>
+
+          <!-- 终止 -->
+          <line x1="600" y1="160" x2="600" y2="190" stroke="#A8A29E" stroke-width="1.4" marker-end="url(#s3a)"/>
+          <rect x="516" y="196" width="168" height="42" rx="21" fill="#F7EBE4" stroke="#C4633F"/>
+          <text x="600" y="222" text-anchor="middle" class="svgtext" font-size="12.5" font-weight="600" fill="#292524">满足停止条件 · 结束</text>
+        </svg>
+      </div>
+      <figcaption>ReAct 范式：推理与行动交替进行，优于只推理（易幻觉）或只行动（易盲目）。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="sec-04">
+  <div class="wrap">
+    <p class="sec-no">04</p>
+    <h2>铁律</h2>
+    <ol class="rules">
+      <li>
+        <strong>谁掌握控制流，谁就是 Agent。</strong>
+        <span class="r-exp">下一步由代码写死是 Workflow；由模型自己决定才是 Agent——这是唯一的分界线。<em class="r-src">Anthropic 2024</em></span>
+      </li>
+      <li>
+        <strong>理性不等于全知。</strong>
+        <span class="r-exp">理性智能体最大化的是「期望表现」，不要求预知实际结果——结果差，不代表不理性。<em class="r-src">AIMA</em></span>
+      </li>
+      <li>
+        <strong>先找最简方案，再谈 Agent。</strong>
+        <span class="r-exp">Agent 用延迟与成本换任务表现；很多场景优化单次 LLM 调用就已足够，甚至根本不需要智能体系统。<em class="r-src">Anthropic 2024</em></span>
+      </li>
+      <li>
+        <strong>每一步都要拿到 ground truth。</strong>
+        <span class="r-exp">执行中必须从环境获取观察来评估进展，否则错误会随步数复利累积。<em class="r-src">Anthropic 2024</em></span>
+      </li>
+      <li>
+        <strong>推理与行动必须交替。</strong>
+        <span class="r-exp">只想不做会幻觉，只做不想会盲目；ReAct 用实验证明交替优于任一单独。<em class="r-src">ReAct 2022</em></span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="sec-05">
+  <div class="wrap">
+    <p class="sec-no">05</p>
+    <h2>溯源</h2>
+    <p class="lead"><strong>本手册每个事实都出自以下五个一手来源</strong>，点击即可验证。</p>
+    <div class="src-grid">
+      <div class="src-card">
+        <div class="src-no">01</div>
+        <div>
+          <h3>Artificial Intelligence: A Modern Approach · Russell &amp; Norvig</h3>
+          <p>智能体的教科书定义（传感器 / 执行器）、理性智能体、PEAS 框架；AI 被定义为「理性智能体的研究与设计」。首版 1995 年，第四版 2020 年，全球 135+ 国家采用。</p>
+          <a href="http://aima.cs.berkeley.edu/" target="_blank" rel="noopener">aima.cs.berkeley.edu</a>
+        </div>
+      </div>
+      <div class="src-card">
+        <div class="src-no">02</div>
+        <div>
+          <h3>Agent-Oriented Programming · Yoav Shoham（1993）</h3>
+          <p>首次提出 AOP：Agent 的状态由信念、能力、选择、承诺等「心智成分」构成；AOP 可视为面向对象编程的特化。发表于 Artificial Intelligence 60(1): 51–92。</p>
+          <a href="https://doi.org/10.1016/0004-3702(93)90034-9" target="_blank" rel="noopener">doi.org/10.1016/0004-3702(93)90034-9</a>
+        </div>
+      </div>
+      <div class="src-card">
+        <div class="src-no">03</div>
+        <div>
+          <h3>Intelligent Agents: Theory and Practice · Wooldridge &amp; Jennings（1995）</h3>
+          <p>被引用最多的智能体操作性定义：「弱概念」下，智能体具备自主、社会、反应、主动四属性。发表于 The Knowledge Engineering Review 10(2)。</p>
+          <a href="https://doi.org/10.1017/S0269888900008122" target="_blank" rel="noopener">doi.org/10.1017/S0269888900008122</a>
+        </div>
+      </div>
+      <div class="src-card">
+        <div class="src-no">04</div>
+        <div>
+          <h3>ReAct: Synergizing Reasoning and Acting in Language Models · Yao et al.（2022, ICLR 2023）</h3>
+          <p>让 LLM 以交替方式生成推理轨迹与行动：推理帮助追踪与修正计划，行动帮助从外部环境获取信息。在 ALFWorld / WebShop 上分别以 34% / 10% 的绝对优势超过已有基线。</p>
+          <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">arxiv.org/abs/2210.03629</a>
+        </div>
+      </div>
+      <div class="src-card">
+        <div class="src-no">05</div>
+        <div>
+          <h3>Building Effective Agents · Anthropic（Erik Schluntz &amp; Barry Zhang, 2024-12-19）</h3>
+          <p>Workflow 与 Agent 的架构区分（控制流归属）；增强型 LLM（检索 / 工具 / 记忆）；「找到可行的最简方案、只在必要时增加复杂度」原则。基于与数十个行业团队的合作实践。</p>
+          <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">anthropic.com/engineering/building-effective-agents</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="sec-06">
+  <div class="wrap">
+    <p class="sec-no">06</p>
+    <h2>自测</h2>
+    <p class="quiz-intro">6 题 · 基础 / 进阶 / 挑战 三级递进 · 全部出自本手册内容</p>
+    <div id="quiz"></div>
+    <div id="quiz-result" hidden>
+      <div class="score"><span id="score-num"></span><em>/ 6</em></div>
+      <div class="lvls" id="score-lvls"></div>
+      <p class="verdict" id="score-verdict"></p>
+      <button id="quiz-reset" type="button">重新自测</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">所有事实均可在 05 溯源中点击验证 · 溯源式概念学习手册</div>
+</footer>
+
+<script>
+(function(){
+  var QUIZ = [
+    {
+      lv: "基础 · 识别",
+      q: "「Agent」在 AIMA 教材中的定义核心是？",
+      opts: [
+        "一个能调用外部工具的大语言模型",
+        "任何能通过传感器感知环境、并通过执行器作用于环境的实体",
+        "具有自我意识、可自主进化的程序",
+        "任何部署在聊天界面里的 AI 助手"
+      ],
+      ans: 1,
+      why: "AIMA 第 2 章开篇即此定义。按这个抽象，恒温器与人类同样是 Agent——定义只看「感知 + 行动」闭环，与技术形态无关。",
+      back: "sec-01"
+    },
+    {
+      lv: "基础 · 识别",
+      q: "Wooldridge &amp; Jennings（1995）的「智能体四属性」不包含以下哪一项？",
+      opts: [
+        "自主性 Autonomy",
+        "反应性 Reactivity",
+        "学习能力 Learning",
+        "社会能力 Social ability"
+      ],
+      ans: 2,
+      why: "四属性为：自主、社会、反应、主动（pro-activeness）。学习不在其中——这是最常见的误记。",
+      back: "sec-01"
+    },
+    {
+      lv: "进阶 · 理解",
+      q: "按 Anthropic 的架构区分，Workflow 与 Agent 的分界线是？",
+      opts: [
+        "是否调用了大语言模型",
+        "是否接入了工具与检索能力",
+        "下一步做什么由预定义代码路径决定，还是由模型动态决定",
+        "是否运行在沙箱环境中"
+      ],
+      ans: 2,
+      why: "两者都属于智能体系统、都可用工具、都可调用 LLM；唯一区别是控制流的归属——代码写死为 Workflow，模型自主为 Agent。",
+      back: "sec-02"
+    },
+    {
+      lv: "进阶 · 理解",
+      q: "关于「理性智能体（rational agent）」，下列说法正确的是？",
+      opts: [
+        "理性智能体总能取得最好的实际结果",
+        "理性指在已有感知与知识下最大化期望表现，不要求预知实际结果",
+        "理性与全知（omniscience）是同一概念",
+        "一个行动是否理性，取决于它事后带来的结果"
+      ],
+      ans: 1,
+      why: "AIMA 明确区分：理性最大化「期望表现」，全知与完美最大化「实际表现」；全知在现实中不可能。事后结果差，不能反推行动不理性。",
+      back: "sec-04"
+    },
+    {
+      lv: "挑战 · 应用",
+      q: "一个客服系统：先把工单分类（退款类走流程 A、咨询类走流程 B），每条流程的步骤完全写死在代码里。按 Anthropic 的分类，它是？",
+      opts: [
+        "Agent，因为它调用 LLM 完成了分类",
+        "Workflow，因为控制流由预定义代码路径编排",
+        "增强型 LLM 本身，因为它没有任何工具",
+        "多智能体系统，因为分类与处理是两个模块"
+      ],
+      ans: 1,
+      why: "LLM 参与不等于 Agent。下一步由谁决定才是判据：这里路径全部写死，LLM 只在节点上干活——这正是 Anthropic 五种工作流中的「路由」模式。",
+      back: "sec-02"
+    },
+    {
+      lv: "挑战 · 应用",
+      q: "你的 LLM Agent 在多步任务中错误越滚越大。按照本手册的铁律，最应优先补上的是？",
+      opts: [
+        "换用参数量更大的模型",
+        "让每一步从环境获取观察（ground truth）来评估进展",
+        "把系统提示写得更长更详细",
+        "增加并行调用的数量"
+      ],
+      ans: 1,
+      why: "铁律四：执行中每一步都必须从环境拿到 ground truth（工具结果、代码执行、测试反馈），否则错误会随步数复利累积——这正是 ReAct 中 Observation 环节存在的意义。",
+      back: "sec-03"
+    }
+  ];
+
+  var container = document.getElementById("quiz");
+  var resultBox = document.getElementById("quiz-result");
+  var answered = {};
+  var scoreByLv = {};
+
+  function render(){
+    container.innerHTML = "";
+    answered = {};
+    scoreByLv = {};
+    resultBox.hidden = true;
+    QUIZ.forEach(function(item, idx){
+      var block = document.createElement("div");
+      block.className = "q";
+      var meta = document.createElement("div");
+      meta.className = "q-meta";
+      meta.innerHTML = '<span class="q-lv"></span><span class="q-no">第 ' + (idx+1) + ' / ' + QUIZ.length + ' 题</span>';
+      meta.querySelector(".q-lv").textContent = item.lv;
+      var text = document.createElement("p");
+      text.className = "q-text";
+      text.innerHTML = item.q;
+      var opts = document.createElement("div");
+      opts.className = "q-opts";
+      item.opts.forEach(function(o, i){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "q-opt";
+        var letter = document.createElement("span");
+        letter.className = "letter";
+        letter.textContent = "ABCD".charAt(i);
+        var body = document.createElement("span");
+        body.innerHTML = o;
+        b.appendChild(letter);
+        b.appendChild(body);
+        b.addEventListener("click", function(){
+          pick(block, opts, item, idx, i);
+        });
+        opts.appendChild(b);
+      });
+      block.appendChild(meta);
+      block.appendChild(text);
+      block.appendChild(opts);
+      container.appendChild(block);
+    });
+  }
+
+  function pick(block, opts, item, idx, choice){
+    if(answered[idx] !== undefined) return;
+    answered[idx] = choice;
+    opts.classList.add("locked");
+    var buttons = opts.querySelectorAll(".q-opt");
+    buttons.forEach(function(b, i){
+      if(i === item.ans) b.classList.add("ok");
+      if(i === choice && choice !== item.ans) b.classList.add("bad");
+    });
+    var why = document.createElement("p");
+    why.className = "q-why";
+    why.innerHTML = (choice === item.ans ? "答对了。" : "答错了。") + item.why +
+      ' <a href="#' + item.back + '">回到 ' + item.back.replace("sec-0","") + ' 节重看</a>';
+    block.appendChild(why);
+    if(choice === item.ans){
+      scoreByLv[item.lv] = (scoreByLv[item.lv] || 0) + 1;
+    }
+    if(Object.keys(answered).length === QUIZ.length){
+      showResult();
+    }
+  }
+
+  function showResult(){
+    var total = 0;
+    var lines = [];
+    QUIZ.forEach(function(item){
+      if(!scoreByLv.hasOwnProperty(item.lv)) scoreByLv[item.lv] = 0;
+    });
+    Object.keys(scoreByLv).forEach(function(lv){
+      total += scoreByLv[lv];
+      lines.push(lv + " " + scoreByLv[lv] + " / " + QUIZ.filter(function(x){return x.lv === lv;}).length);
+    });
+    document.getElementById("score-num").textContent = total;
+    document.getElementById("score-lvls").textContent = lines.join("　·　");
+    var verdict;
+    if(total === 6){
+      verdict = "全对。你已经具备识别与设计 Agent 系统的判断力——下一步可去 05 溯源精读原始文献。";
+    }else if(total >= 4){
+      verdict = "理解扎实。按解析里的指引回到对应章节，补齐一两处盲点即可。";
+    }else{
+      verdict = "概念骨架尚未立起。建议从 01 顺读到 04，重点消化 02 的「分界线」。";
+    }
+    document.getElementById("score-verdict").textContent = verdict;
+    resultBox.hidden = false;
+  }
+
+  document.getElementById("quiz-reset").addEventListener("click", function(){
+    render();
+    window.scrollTo({top: document.getElementById("sec-06").offsetTop, behavior: "smooth"});
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

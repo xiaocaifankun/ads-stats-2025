@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ---- LLM Wiki Agent ----
+# Private data — always ignored, safe for credentials/drafts
+private/
+
+# Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.trash/
+
+# macOS
+.DS_Store
+
+# Generated graph output (rebuildable)
+graph/graph.json
+graph/graph.html
+
+# Reports (regenerate on demand)
+wiki/health-report.md
+wiki/lint-report.md
+
