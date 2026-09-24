@@ -51,3 +51,15 @@
 ## 已完成的 ingest
 
 - **2026-09-17**：4 份 Agent 主题手册（skills / agent / memory×2）→ 4 source + 2 entity + 14 concept = 20 页。图谱 21 节点 / 87 边。health 全绿，断链 0。
+
+## 课程 / 班级 ↔ 仓库对应（2026-09-24 判定）
+
+| 课程 | 教学班 | 上课时段 | 仓库 |
+|---|---|---|---|
+| 统计与数据分析 | 广告学 1 班 | 周三晚上 | `repos/statistics-data-analysis`（推断） |
+| 统计与数据分析 | 广告学 2 班 | 周四下午 | `repos/ads-stats-2025` ⇄ `Desktop/ads-stats-2025`（README 明写） |
+| 大数据与人工智能 | — | 周四上午 | `repos/bigdata-ai-assignments` |
+
+判定手法：提交时间按「星期 + 时段」聚类（本机课表三档起始 08:40 / 10:40 / 19:30）。1 班的旁证冲突见 `2026-09-24.md`。
+
+另注：`repos/ads-stats-2025` 是无 `.git` 的副本，活仓库在 `Desktop/ads-stats-2025`（远端 `yangjh-xbmu/ads-stats-2025`）。
