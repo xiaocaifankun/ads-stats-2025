@@ -96,7 +96,7 @@ gh auth status 2>&1 | head -5
 | 情况 | 处置 |
 |---|---|
 | 无 `origin` 远程 | 停下，告知缺远程；新仓库改用 `git-init` |
-| 无上游分支 | push 时加 `-u origin <branch>` |
+| 无上游分支 | push 时加 `-u origin <branch>`，或推完用 `git branch --set-upstream-to=origin/<b> <b>` 补（见下） |
 | gh 未登录 | 停下，让用户跑 `gh auth login`；**不要**回退 GCM |
 | 不在 git 仓库 | 见第六节（无 `.git` 且远端已存在时的接法） |
 
@@ -314,10 +314,17 @@ git -c credential.helper= -c credential.helper='!gh auth git-credential' push or
 ```bash
 echo -n "本地: "; git rev-parse HEAD
 echo -n "远程: "; timeout 60 git ls-remote origin "refs/heads/$BRANCH" | cut -f1
+echo -n "上游: "; git config --get "branch.$BRANCH.merge" || echo "未设置"
 git status --short && echo "(空=工作区干净)"
 ```
 
 哈希一致 = 成功。
+
+> **实测（2026-09-24）**：全局 `push.autosetupremote=true` **并未**在 `git push origin main` 后建立上游——推送成功但 `branch.main.merge` 仍为空。
+> 后果：之后 `git pull` / 不带参数的 `git push` 会报 `no upstream configured`。
+> **处理**：推完顺手查一次，缺了就 `git branch --set-upstream-to=origin/<branch> <branch>`。
+>
+> 注意 `ls-remote` 可能被代理 502 打断，此时**不要**据此判定推送失败——以 `git push` 自身的输出（`<old>..<new>  main -> main`）和 `gh repo view --json pushedAt` 交叉确认。
 
 ---
 
