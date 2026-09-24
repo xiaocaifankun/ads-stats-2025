@@ -13,10 +13,11 @@
 
 ## 用途
 
-课堂投屏演示用。含两部分：
+课堂投屏演示用。含三部分：
 
 - `slides/` — 单文件 HTML 课件，浏览器直接打开，无需环境依赖
 - `notebooks/` — Python 实操讲义（Jupyter Notebook），配合数据集现场跑
+- `scripts/python-basics/` — 基础语法讲义脚本，在 VSCode 里逐个文件跑，纯标准库零依赖，见 [该目录的说明](scripts/python-basics/README.md)
 
 ## 目录结构
 
@@ -26,7 +27,8 @@ ads-stats-2025/
 ├── notebooks/    # Jupyter Notebook 实操讲义
 ├── datasets/     # 课程数据集（CSV）
 ├── exercises/    # 课堂练习与课后作业
-└── notes/        # 讲义文字稿、补充材料
+├── notes/        # 讲义文字稿、补充材料
+└── scripts/      # 可运行 Python 讲义脚本（python-basics 基础语法系列）
 ```
 
 ## 环境准备
