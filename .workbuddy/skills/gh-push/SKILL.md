@@ -209,6 +209,9 @@ git commit -m "docs: add wiki source pages for agent memory"
 
 **只看 `git status` 会误判两个文件、丢掉一整节记录。**
 
+> **同一文件的方向会随时间反转（2026-09-24 当天实测）**：`scripts/01.ipynb` 上午被判为「本地是旧版、须丢弃」，当天傍晚同一文件却变成「本地是新版、须提交」（新增了大批课堂演示单元格）。
+> 所以核对**必须每次重跑 `git diff -- <file>`**——不能沿用上一轮的结论，也不能因为"上次订正过这个文件"就默认它还是旧版。方向是从**当前** diff 读出来的，不是从记忆里读出来的。
+
 ### 无 `.git` 的目录，但远端已有仓库时
 
 不要 `clone`（会覆盖本地增量），也不要强推（会覆盖远端历史）。接法：
@@ -319,6 +322,12 @@ git status --short && echo "(空=工作区干净)"
 ```
 
 哈希一致 = 成功。
+
+**`ls-remote` 被 502 打断时，换这条**（更稳：纯小请求，不受 packfile 传输失败影响）：
+
+```bash
+echo -n "远程(gh): "; gh api "repos/<owner>/<repo>/commits/$BRANCH" --jq .sha
+```
 
 > **实测（2026-09-24）**：全局 `push.autosetupremote=true` **并未**在 `git push origin main` 后建立上游——推送成功但 `branch.main.merge` 仍为空。
 > 后果：之后 `git pull` / 不带参数的 `git push` 会报 `no upstream configured`。
